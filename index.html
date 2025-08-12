@@ -11,10 +11,26 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header with logo and navigation -->
+  <header class="main-header">
+    <div class="logo">
+      <span class="logo-icon">T</span>
+      <span class="logo-text">Trove</span>
+    </div>
+    <nav class="top-nav">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#what">What</a></li>
+        <li><a href="#how">How</a></li>
+        <li><a href="#treasury">Treasury</a></li>
+        <li><a href="#join">Join</a></li>
+      </ul>
+    </nav>
+  </header>
   <!-- Page wrapper with dotted background -->
   <div class="page-container">
     <!-- Hero / Intro Section -->
-    <section class="hero-section">
+    <section id="home" class="hero-section">
       <div class="hero-content">
         <h1 class="site-name">Trove</h1>
         <p class="tagline">Rewarding Long‑Term Investors Better</p>
@@ -89,6 +105,35 @@
           <button class="btn btn-blue" disabled>Buy More</button>
         </div>
       </div>
+    </section>
+    <!-- Info Sections -->
+    <section id="what" class="info-section">
+      <h2>What?</h2>
+      <p>We allow you to invest in the same major companies but with better yields than anywhere else. Why should traders and short‑term investors be rewarded when you stick it out with these companies for months or years? You take priority; you take the rewards.</p>
+      <p>On top of this we’re always finding ways to reward our users more.</p>
+    </section>
+
+    <section id="how" class="info-section">
+      <h2>How?</h2>
+      <p>To prioritise you against short‑term buyers, we only allow dividends to be shared with users who opt in or “stake” their stocks and have held for at least 60 days. This ensures that with new users joining the platform you will always receive their share of dividends before they reach the 60‑day milestone.</p>
+      <p>In addition to this, as extra yield and protection against slow user growth, we share all of our treasury yields with our users.</p>
+    </section>
+
+    <section id="treasury" class="info-section">
+      <h2>Treasury</h2>
+      <p>The Treasury is our treasure trove! Fifty percent of all fees generated at Trove are put toward growing our crypto treasury. Our entire treasury is staked sporadically across multiple staking pools. All yields received are shared with users to provide extra incentive and reward.</p>
+      <p>This allows you to benefit from other user actions, including whales or users who joined before you or have stopped using the platform.</p>
+    </section>
+
+    <section id="join" class="info-section join-section">
+      <h2>Join</h2>
+      <p>Like our idea? Trove is currently seeking VCs or investors. Enquire below to speak to us.</p>
+      <form id="join-form">
+        <input type="text" id="join-name" placeholder="Your Name" required>
+        <input type="email" id="join-email" placeholder="Your Email" required>
+        <textarea id="join-message" rows="4" placeholder="Your message" required></textarea>
+        <button type="submit" class="btn btn-primary">Enquire</button>
+      </form>
     </section>
   </div>
 

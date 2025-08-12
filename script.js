@@ -28,4 +28,27 @@ function simulateReturn() {
 
 document.addEventListener('DOMContentLoaded', () => {
   simulateReturn();
+  // Handle join form submission
+  const joinForm = document.getElementById('join-form');
+  if (joinForm) {
+    joinForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const nameField = document.getElementById('join-name');
+      const emailField = document.getElementById('join-email');
+      const messageField = document.getElementById('join-message');
+      const name = nameField ? nameField.value.trim() : '';
+      const email = emailField ? emailField.value.trim() : '';
+      const message = messageField ? messageField.value.trim() : '';
+      let feedback = document.getElementById('join-feedback');
+      if (!feedback) {
+        feedback = document.createElement('p');
+        feedback.id = 'join-feedback';
+        feedback.style.marginTop = '1rem';
+        feedback.style.color = '#059669';
+        joinForm.appendChild(feedback);
+      }
+      feedback.textContent = `Thanks ${name || 'there'}! We’ll reach out to ${email} soon.`;
+      joinForm.reset();
+    });
+  }
 });

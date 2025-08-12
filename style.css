@@ -15,6 +15,128 @@ body {
   color: #1f2937; /* dark slate */
 }
 
+/* Header */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  margin: 1rem auto;
+  max-width: 1200px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #0066cc;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.top-nav ul {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.top-nav a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+
+.top-nav a:hover {
+  color: #0066cc;
+}
+
+/* Info sections */
+.info-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.info-section h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.info-section p {
+  font-size: 1rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.join-section form {
+  margin-top: 1rem;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.join-section input,
+.join-section textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #1f2937;
+  background-color: #f9fafb;
+}
+
+.join-section input:focus,
+.join-section textarea:focus {
+  outline: none;
+  border-color: #0066cc;
+  background-color: #ffffff;
+}
+
+.join-section button.btn-primary {
+  align-self: flex-start;
+  padding: 0.75rem 1.5rem;
+  background-color: #0066cc;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.join-section button.btn-primary:hover {
+  background-color: #004f9a;
+}
+
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
