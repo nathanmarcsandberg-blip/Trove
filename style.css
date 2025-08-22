@@ -71,6 +71,25 @@ body {
   color: #0066cc;
 }
 
+/* Account/login button in header */
+.account-btn {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid #0066cc;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #0066cc;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.account-btn:hover {
+  background-color: #0066cc;
+  color: #ffffff;
+}
+
 /* Info sections */
 .info-section {
   margin-top: 3rem;
