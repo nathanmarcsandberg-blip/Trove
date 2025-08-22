@@ -1,78 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - Trove</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up – Trove</title>
+  <link rel="stylesheet" href="style.css?v=3"/>
 </head>
 <body>
-  <header>
-    <img src="hero-logo.png" alt="Trove Logo" class="logo">
+  <header class="main-header">
+    <div class="logo">
+      <div class="logo-icon-img">
+        <img src="logo512.png" alt="Trove" class="logo-img"/>
+      </div>
+      <span class="logo-text">Trove</span>
+    </div>
+    <nav class="top-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="positions.html">Positions</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <main>
-    <h1>welcome to trove</h1>
-    
-    <form id="signupForm">
+  <div class="page-container">
+    <section class="info-section signup-wrapper">
+      <h2>welcome to trove</h2>
+
       <!-- Step 1 -->
-      <div class="step" id="step1">
-        <input type="text" name="firstName" placeholder="first name" required>
-        <input type="text" name="surname" placeholder="surname" required>
-        <input type="date" name="dob" placeholder="date of birth" required>
-        <button type="button" onclick="nextStep(2)">Next</button>
+      <div class="step active">
+        <div class="form-grid">
+          <input type="text" placeholder="first name" required>
+          <input type="text" placeholder="surname" required>
+          <input type="date" placeholder="date of birth" required>
+        </div>
+        <div class="step-nav">
+          <button class="btn-primary next-btn">Next</button>
+        </div>
+        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
       </div>
 
       <!-- Step 2 -->
-      <div class="step hidden" id="step2">
-        <input type="password" name="password" placeholder="create password" required>
-        <input type="password" name="confirmPassword" placeholder="confirm password" required>
-        <input type="email" name="email" placeholder="email" required>
-        <button type="button" onclick="nextStep(3)">Next</button>
+      <div class="step">
+        <div class="form-grid">
+          <input type="password" placeholder="create password" required>
+          <input type="password" placeholder="confirm password" required>
+          <input type="email" placeholder="email" required>
+        </div>
+        <div class="step-nav">
+          <button class="btn-grey back-btn">Back</button>
+          <button class="btn-primary next-btn">Next</button>
+        </div>
+        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
       </div>
 
       <!-- Step 3 -->
-      <div class="step hidden" id="step3">
-        <input type="tel" name="phone" placeholder="phone number" required>
-        <input type="text" name="country" placeholder="country" required>
-        <input type="text" name="address" placeholder="find address" required>
-        <button type="button" onclick="nextStep(4)">Next</button>
+      <div class="step">
+        <div class="form-grid">
+          <input type="tel" placeholder="phone number" required>
+          <input type="text" placeholder="country" required>
+          <input type="text" placeholder="find address" required>
+        </div>
+        <div class="step-nav">
+          <button class="btn-grey back-btn">Back</button>
+          <button class="btn-primary next-btn">Next</button>
+        </div>
+        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
       </div>
 
       <!-- Step 4 -->
-      <div class="step hidden" id="step4">
-        <select name="currency" required>
-          <option value="">choose currency</option>
-          <option value="usd">USD</option>
-          <option value="eur">EUR</option>
-          <option value="gbp">GBP</option>
-        </select>
-        <select name="theme">
-          <option value="light">light mode</option>
-          <option value="dark">dark mode</option>
-        </select>
-        <label>
-          <input type="checkbox" name="twofa"> enable 2fa?
-        </label>
-        <button type="button" onclick="nextStep(5)">Next</button>
-      </div>
-
-      <!-- Step 5 (Optional Pets) -->
-      <div class="step hidden" id="step5">
-        <p>adopt a pet! completely optional. completely worthwhile</p>
-        <div class="pets">
-          <div><img src="dog.png" alt="Dog"><button type="button">Adopt</button></div>
-          <div><img src="cat.png" alt="Cat"><button type="button">Adopt</button></div>
-          <div><img src="fish.png" alt="Fish"><button type="button">Adopt</button></div>
-          <div><img src="dragon.png" alt="Dragon"><button type="button">Adopt</button></div>
+      <div class="step">
+        <div class="form-grid">
+          <select required>
+            <option value="">choose currency</option>
+            <option>USD</option><option>EUR</option><option>GBP</option>
+          </select>
+          <select>
+            <option>light mode</option><option>dark mode</option>
+          </select>
+          <label class="checkbox"><input type="checkbox"> enable 2fa?</label>
         </div>
-        <button type="submit">Finish</button>
+        <div class="step-nav">
+          <button class="btn-grey back-btn">Back</button>
+          <button class="btn-primary next-btn">Next</button>
+        </div>
+        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
       </div>
-    </form>
 
-    <img src="treasure-chest.png" alt="Treasure Chest" class="treasure">
-  </main>
+      <!-- Step 5 (optional pets) -->
+      <div class="step">
+        <p class="subtext">
+          adopt a pet! completely optional. completely worthwhile
+        </p>
+        <div class="pets-grid">
+          <div class="pet-card"><img src="dog.png" alt="Dog"><button class="btn-grey">Adopt</button></div>
+          <div class="pet-card"><img src="cat.png" alt="Cat"><button class="btn-grey">Adopt</button></div>
+          <div class="pet-card"><img src="fish.png" alt="Fish"><button class="btn-grey">Adopt</button></div>
+          <div class="pet-card"><img src="dragon.png" alt="Dragon"><button class="btn-grey">Adopt</button></div>
+        </div>
+        <div class="step-nav">
+          <button class="btn-grey back-btn">Back</button>
+          <button class="btn-primary finish-btn">Finish</button>
+        </div>
+        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
+      </div>
 
-  <script src="script.js"></script>
+      <!-- Completion -->
+      <div class="step">
+        <h3>You're set! Welcome to Trove. 🎉</h3>
+        <p>We’ve saved your preferences locally for this demo.</p>
+        <a class="btn-blue" href="positions.html">Go to Positions</a>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js?v=3"></script>
 </body>
 </html>
