@@ -455,3 +455,107 @@ a {
   opacity: 0.8;
   pointer-events: none;
 }
+
+/* Additional styles for How It Works page */
+.how-section {
+  padding: 3rem 2rem;
+  border-bottom: 1px solid #eee;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.how-section:last-of-type {
+  border-bottom: none;
+}
+.intro-section .intro-text {
+  font-size: 1.1rem;
+  max-width: 650px;
+  margin-top: 1rem;
+  color: var(--color-grey);
+}
+.long-term-section ul.how-list {
+  margin: 1rem 0 1rem 1.5rem;
+  list-style: disc;
+}
+.long-term-section ul.how-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+.treasury-explained-section .treasury-icons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+.treasury-explained-section .treasury-icon {
+  text-align: center;
+  font-size: 0.85rem;
+}
+.treasury-explained-section .treasury-icon img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5rem;
+}
+.distribution-bar {
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1rem;
+  box-shadow: inset 0 0 0 1px #ddd;
+}
+.distribution-members {
+  background-color: var(--color-secondary);
+  color: var(--color-light);
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+.distribution-raffle {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+.fun-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.fun-item {
+  flex: 1 1 260px;
+  background-color: var(--color-light);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease;
+}
+.fun-item:hover {
+  transform: translateY(-4px);
+}
+.fun-item img {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.75rem;
+}
+.fun-item h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+.fun-item p {
+  font-size: 0.85rem;
+}
+.community-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+.call-to-action-section {
+  text-align: center;
+  padding-top: 2rem;
+}
