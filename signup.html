@@ -1,118 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up – Trove</title>
-  <link rel="stylesheet" href="style.css?v=3"/>
-</head>
-<body>
-  <header class="main-header">
-    <div class="logo">
-      <div class="logo-icon-img">
-        <img src="logo512.png" alt="Trove" class="logo-img"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up – Trove</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo-container">
+        <div class="logo-circle"><span>T</span></div>
+        <span class="logo-text">TROVE</span>
       </div>
-      <span class="logo-text">Trove</span>
-    </div>
-    <nav class="top-nav">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="positions.html">Positions</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <div class="page-container">
-    <section class="info-section signup-wrapper">
-      <h2>welcome to trove</h2>
-
-      <!-- Step 1 -->
-      <div class="step active">
-        <div class="form-grid">
-          <input type="text" placeholder="first name" required>
-          <input type="text" placeholder="surname" required>
-          <input type="date" placeholder="date of birth" required>
+      <nav class="site-nav">
+        <a href="index.html#how">how</a>
+        <a href="index.html#assets">assets</a>
+        <a href="index.html#contact">contact</a>
+        <a href="index.html" class="login-btn">log in</a>
+      </nav>
+    </header>
+    <main>
+      <div class="signup-wrapper">
+        <!-- Step 1 -->
+        <div class="step step-1 active">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <input type="text" id="firstName" placeholder="First name" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="surname" placeholder="Surname" required />
+          </div>
+          <div class="form-group">
+            <input type="date" id="dob" placeholder="Date of birth" required />
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="next-btn">Next</button>
+          </div>
         </div>
-        <div class="step-nav">
-          <button class="btn-primary next-btn">Next</button>
+        <!-- Step 2 -->
+        <div class="step step-2">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <input type="password" id="password" placeholder="Create password" required />
+          </div>
+          <div class="form-group">
+            <input type="password" id="confirmPassword" placeholder="Confirm password" required />
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" placeholder="Email" required />
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
         </div>
-        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
+        <!-- Step 3 -->
+        <div class="step step-3">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <input type="tel" id="phone" placeholder="Phone number" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="country" placeholder="Country" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="address" placeholder="Find address" required />
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- Step 4 -->
+        <div class="step step-4">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <select id="currency" required>
+              <option value="" disabled selected>Choose currency</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="BTC">BTC</option>
+              <option value="ETH">ETH</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select id="theme" required>
+              <option value="" disabled selected>Light mode, dark mode</option>
+              <option value="light">Light mode</option>
+              <option value="dark">Dark mode</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="twofa" /> Enable 2FA?
+            </label>
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- Step 5 -->
+        <div class="step step-5">
+          <h2>welcome to trove</h2>
+          <p style="margin-bottom: 1rem; font-weight: 600;">adopt a pet! completely optional. completely worthwhile</p>
+          <p style="margin-top: -0.5rem; font-size: 0.85rem; color: var(--color-grey);">look after your pet to earn extra benefits on trove such as shorter unlock periods, entries into cash raffles, and more</p>
+          <div class="pet-options">
+            <div class="pet-card" data-pet="Dog">
+              <img src="dog.png" alt="Dog" />
+              <div>Dog</div>
+            </div>
+            <div class="pet-card" data-pet="Cat">
+              <img src="cat.png" alt="Cat" />
+              <div>Cat</div>
+            </div>
+            <div class="pet-card" data-pet="Fish">
+              <img src="fish.png" alt="Fish" />
+              <div>Fish</div>
+            </div>
+            <div class="pet-card" data-pet="Dragon">
+              <img src="dragon.png" alt="Dragon" />
+              <div>Dragon</div>
+            </div>
+            <div class="pet-card" data-pet="Custom">
+              <div style="font-size: 0.95rem; margin-top: 1.25rem;">Custom<br />Request</div>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Finish</button>
+          </div>
+        </div>
+        <!-- Decorative treasure chest -->
+        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest" />
       </div>
-
-      <!-- Step 2 -->
-      <div class="step">
-        <div class="form-grid">
-          <input type="password" placeholder="create password" required>
-          <input type="password" placeholder="confirm password" required>
-          <input type="email" placeholder="email" required>
-        </div>
-        <div class="step-nav">
-          <button class="btn-grey back-btn">Back</button>
-          <button class="btn-primary next-btn">Next</button>
-        </div>
-        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="step">
-        <div class="form-grid">
-          <input type="tel" placeholder="phone number" required>
-          <input type="text" placeholder="country" required>
-          <input type="text" placeholder="find address" required>
-        </div>
-        <div class="step-nav">
-          <button class="btn-grey back-btn">Back</button>
-          <button class="btn-primary next-btn">Next</button>
-        </div>
-        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="step">
-        <div class="form-grid">
-          <select required>
-            <option value="">choose currency</option>
-            <option>USD</option><option>EUR</option><option>GBP</option>
-          </select>
-          <select>
-            <option>light mode</option><option>dark mode</option>
-          </select>
-          <label class="checkbox"><input type="checkbox"> enable 2fa?</label>
-        </div>
-        <div class="step-nav">
-          <button class="btn-grey back-btn">Back</button>
-          <button class="btn-primary next-btn">Next</button>
-        </div>
-        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
-      </div>
-
-      <!-- Step 5 (optional pets) -->
-      <div class="step">
-        <p class="subtext">
-          adopt a pet! completely optional. completely worthwhile
-        </p>
-        <div class="pets-grid">
-          <div class="pet-card"><img src="dog.png" alt="Dog"><button class="btn-grey">Adopt</button></div>
-          <div class="pet-card"><img src="cat.png" alt="Cat"><button class="btn-grey">Adopt</button></div>
-          <div class="pet-card"><img src="fish.png" alt="Fish"><button class="btn-grey">Adopt</button></div>
-          <div class="pet-card"><img src="dragon.png" alt="Dragon"><button class="btn-grey">Adopt</button></div>
-        </div>
-        <div class="step-nav">
-          <button class="btn-grey back-btn">Back</button>
-          <button class="btn-primary finish-btn">Finish</button>
-        </div>
-        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest"/>
-      </div>
-
-      <!-- Completion -->
-      <div class="step">
-        <h3>You're set! Welcome to Trove. 🎉</h3>
-        <p>We’ve saved your preferences locally for this demo.</p>
-        <a class="btn-blue" href="positions.html">Go to Positions</a>
-      </div>
-    </section>
-  </div>
-
-  <script src="script.js?v=3"></script>
-</body>
+    </main>
+    <script src="script.js"></script>
+  </body>
 </html>
