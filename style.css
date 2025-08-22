@@ -1,621 +1,457 @@
-.logo-icon-img {
-  width: 36px;
-  height: 36px;
-  background-color: var(--primary-blue);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-icon-img img.logo-img {
-  width: 20px;
-  height: 20px;
-  filter: invert(1);
-}
 /*
- * Stylesheet for the Trove MVP wireframe.
- * Colours: black and white with blue accents.
+ * Global styling for the new Trove landing page and sign‑up flow.
+ * The design focuses on crisp typography, high contrast between
+ * black and white, and a vibrant purple accent inspired by the
+ * provided wireframes. Sections are spaced generously for a
+ * lightweight, approachable feel.
  */
 
-* {
+/* Root variables for easy theme adjustments */
+:root {
+  --font-primary: 'Poppins', sans-serif;
+  --color-background: #f9f9f9;
+  --color-text: #1f1f1f;
+  --color-primary: #003366; /* deep royal blue used for calls to action */
+  --color-secondary: #7a27b5; /* rich purple accent for borders and highlights */
+  --color-light: #ffffff;
+  --color-dark: #000000;
+  --color-grey: #666666;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  font-family: var(--font-primary);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.6;
+  scroll-behavior: smooth;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #ffffff;
-  color: var(--accent-black);
-}
-
-/* Colour variables for deeper royal blue and black accents */
-:root {
-  --primary-blue: #003366; /* deeper royal blue */
-  --secondary-blue: #00224d; /* darker shade for hover */
-  --accent-black: #0f172a;
-  --border-grey: #e5e7eb;
-  --light-bg: #f9fafb;
-  --green: #059669;
-  --red: #dc2626;
-  --yellow: #fbbf24;
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 /* Header */
-.main-header {
+.site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  border: 1px solid var(--border-grey);
-  border-radius: 8px;
   padding: 1rem 2rem;
-  margin: 1rem auto;
-  max-width: 1200px;
+  background-color: var(--color-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.logo {
+.logo-container {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* Logo image override */
-.logo-img {
-  width: 36px;
-  height: 36px;
+.logo-circle {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  object-fit: cover;
-  /* Invert colours to ensure dark logo appears on light header */
-  filter: invert(1);
+  background-color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-light);
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .logo-text {
-  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--accent-black);
+  letter-spacing: 0.05em;
+  font-size: 1.2rem;
 }
 
-.top-nav ul {
+.site-nav {
   display: flex;
+  align-items: center;
   gap: 1.5rem;
-  list-style: none;
 }
 
-.top-nav a {
-  text-decoration: none;
-  font-weight: 600;
+.site-nav a {
   font-size: 0.95rem;
-  color: var(--accent-black);
-  transition: color 0.3s ease;
+  font-weight: 500;
+  text-transform: lowercase;
+  color: var(--color-text);
+  transition: color 0.2s ease;
 }
 
-.top-nav a:hover {
-  color: var(--primary-blue);
+.site-nav a:hover {
+  color: var(--color-primary);
 }
 
-/* Account/login button in header */
-.account-btn {
-  margin-left: 1rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border: 1px solid var(--primary-blue);
+.login-btn {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-dark);
   border-radius: 4px;
-  background-color: #ffffff;
-  color: var(--primary-blue);
-  text-decoration: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-weight: 500;
+  text-transform: lowercase;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.account-btn:hover {
-  background-color: var(--primary-blue);
-  color: #ffffff;
+.login-btn:hover {
+  background-color: var(--color-dark);
+  color: var(--color-light);
 }
 
-/* Info sections */
-.info-section {
-  margin-top: 3rem;
-  padding: 2rem 2rem 2rem 2.5rem;
-  border: 1px solid var(--border-grey);
-  border-radius: 8px;
-  background-color: #ffffff;
-  position: relative;
-}
-
-/* vertical coloured bar for info sections */
-.info-section::before {
-  content: '';
-  position: absolute;
-  left: 0.5rem;
-  top: 1rem;
-  bottom: 1rem;
-  width: 4px;
-  background-color: var(--primary-blue);
-  border-radius: 2px;
-}
-
-.info-section h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--accent-black);
-  margin-bottom: 1rem;
-}
-
-.info-section p {
-  font-size: 1rem;
-  color: #4b5563;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-}
-
-.join-section form {
-  margin-top: 1rem;
-  max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.join-section input,
-.join-section textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: var(--accent-black);
-  background-color: var(--light-bg);
-}
-
-.join-section input:focus,
-.join-section textarea:focus {
-  outline: none;
-  border-color: var(--primary-blue);
-  background-color: #ffffff;
-}
-
-.join-section button.btn-primary {
-  align-self: flex-start;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary-blue);
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 0.95rem;
-}
-
-.join-section button.btn-primary:hover {
-  background-color: var(--secondary-blue);
-}
-
-.page-container {
-  max-width: 1200px;
+/* Hero */
+.hero {
+  padding: 4rem 2rem 3rem;
+  text-align: left;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 1rem;
-  /* subtle dotted background */
-  background-image: radial-gradient(var(--border-grey) 1px, transparent 1px);
-  background-size: 16px 16px;
 }
 
-/* Hero Section */
-.hero-section {
-  background-color: #ffffff;
-  border: 1px solid var(--border-grey);
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  max-width: 600px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--color-grey);
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+.primary-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.primary-btn:hover {
+  background-color: #00224e;
+}
+
+/* Section headings */
+.section-heading {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Treasury pool */
+.treasury-pool {
+  padding: 3rem 2rem;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.pool-cards {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
+  border: 2px solid var(--color-secondary);
   border-radius: 8px;
-  padding: 2rem;
+  padding: 2rem 1rem;
+}
+
+.pool-card {
+  text-align: center;
+  margin: 1rem;
+}
+
+.circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.circle.black {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+}
+
+.metric-label {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-grey);
+}
+
+/* Staking breakdown */
+.staking-breakdown {
+  padding: 3rem 2rem;
+}
+
+.stake-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stake-card {
+  flex: 1 1 260px;
+  background-color: var(--color-light);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease;
+}
+
+.stake-card:hover {
+  transform: translateY(-4px);
+}
+
+.stake-card img {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.75rem;
+}
+
+.stake-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.stake-card p {
+  font-size: 0.85rem;
+  margin: 0.15rem 0;
+  color: var(--color-grey);
+}
+
+/* User rewards */
+.user-rewards {
+  padding: 3rem 2rem;
+  border-top: 1px solid #eee;
+}
+
+.rewards-content {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
-  align-items: center;
+  align-items: flex-start;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.hero-content {
-  flex: 1 1 40%;
+.rewards-text {
+  flex: 1 1 300px;
 }
 
-.site-name {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--accent-black);
-  margin-bottom: 0.5rem;
-}
-
-.tagline {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--primary-blue);
-  margin-bottom: 0.3rem;
-}
-
-.subtagline {
+.rewards-text h3 {
+  margin: 1rem 0 0.25rem;
   font-size: 1rem;
-  color: #4b5563;
-  margin-bottom: 1.5rem;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
   font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
+  color: var(--color-primary);
 }
 
-.btn-primary {
-  background-color: var(--primary-blue);
-  color: #fff;
-  border: none;
-}
-
-.btn-secondary {
-  background-color: #ffffff;
-  color: var(--primary-blue);
-  border: 2px solid var(--primary-blue);
-}
-
-/* Stock panels in hero */
-.hero-stocks {
-  flex: 1 1 50%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: flex-end;
-  align-self: stretch;
-}
-
-.stock-panel {
-  border: 2px solid var(--primary-blue);
-  border-radius: 8px;
-  padding: 1rem;
-  background-color: #ffffff;
-  flex: 1 1 calc(33.333% - 1rem);
-  min-width: 150px;
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-}
-
-.stock-name {
-  font-weight: 700;
-  color: var(--primary-blue);
-  margin-bottom: 0.25rem;
-}
-
-.stock-apy {
-  font-size: 0.85rem;
-  color: #4b5563;
-  margin-top: auto;
-}
-
-/* Benefits equation */
-.benefits-section {
-  margin-top: 2rem;
-}
-
-.benefits-grid {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.benefit-item {
-  padding: 1rem;
-  flex: 1 1 20%;
-  border: 1px solid #e5e7eb;
-  text-align: center;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #1f2937;
-}
-
-.benefit-item.benefit-result {
-  background-color: #0066cc;
-  color: #ffffff;
-  border-color: #0066cc;
-}
-
-.benefit-symbol {
-  padding: 1rem;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0066cc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Positions section */
-.positions-section {
-  margin-top: 3rem;
-}
-
-.positions-title {
-  font-size: 2rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: var(--accent-black);
-}
-
-.positions-categories {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #4b5563;
-  margin-bottom: 1.5rem;
-}
-
-.position-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background-color: #ffffff;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.position-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.position-logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-blue);
-}
-
-.position-return {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-}
-
-.dots {
-  display: flex;
-  gap: 0.3rem;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  background-color: #9ca3af;
-  border-radius: 50%;
-}
-
-.return-value {
-  font-weight: 600;
-}
-
-.return-value span#return-percent {
-  color: #059669;
-}
-
-.return-value .return-period {
-  color: #4b5563;
-  font-weight: 400;
-  font-size: 0.8rem;
-  margin-left: 0.25rem;
-}
-
-.position-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.progress-heading {
-  font-weight: 600;
+.rewards-text p {
+  margin: 0 0 0.75rem;
   font-size: 0.9rem;
-  color: var(--accent-black);
+  color: var(--color-text);
 }
 
-.progress-bar {
-  position: relative;
-  height: 4px;
-  background-color: var(--border-grey);
-  border-radius: 2px;
-  width: 100%;
-}
-
-.progress-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background-color: var(--primary-blue);
-  width: 40%;
-  border-radius: 2px;
-}
-
-.progress-marker {
-  position: absolute;
-  top: -4px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: none;
-  background-color: #ffffff;
-}
-
-.progress-marker.start {
-  left: 0;
-  background-color: #dc2626;
-}
-
-.progress-marker.current {
-  left: 40%;
-  background-color: #fbbf24;
-}
-
-.progress-marker.end {
-  right: 0;
-  background-color: #059669;
-}
-
-.progress-labels {
+.rewards-actions {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: #4b5563;
-}
-
-.position-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.btn-grey {
-  background-color: #6b7280;
-  color: #ffffff;
-  border: none;
-  cursor: not-allowed;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.btn-red {
-  background-color: #dc2626;
-  color: #ffffff;
-  border: none;
-  cursor: not-allowed;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.btn-green {
-  background-color: #059669;
-  color: #ffffff;
-  border: none;
-  cursor: not-allowed;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.btn-blue {
-  background-color: var(--primary-blue);
-  color: #ffffff;
-  border: none;
-  cursor: not-allowed;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-/* Redesigned benefits section styles */
-.benefits-section {
-  margin-top: 2rem;
-}
-
-.benefits-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
   gap: 1rem;
+  margin-top: 1.5rem;
 }
 
-.benefit-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  border: 2px solid var(--primary-blue);
-  border-radius: 8px;
-  background-color: #ffffff;
-  width: 150px;
+.secondary-btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  transition: background-color 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background-color: var(--color-primary);
+}
+
+.rewards-image {
+  flex: 1 1 300px;
   text-align: center;
-  color: var(--accent-black);
 }
 
-.benefit-card h3 {
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
+.rewards-image img {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 8px;
 }
 
-.benefit-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: var(--primary-blue);
+/* Contact */
+.contact-section {
+  padding: 3rem 2rem;
+  text-align: center;
 }
 
-/* Result card uses inverted colours */
-.result-card {
-  background-color: var(--primary-blue);
-  border-color: var(--primary-blue);
-  color: #ffffff;
+.contact-section p {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
 }
 
-.benefit-connector {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-blue);
-  margin: 0 0.5rem;
+.contact-section a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* Footer */
+.site-footer {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-grey);
+  background-color: var(--color-light);
+  border-top: 1px solid #eee;
 }
 
 /* Responsive adjustments */
-@media (max-width: 900px) {
-  .hero-section {
+@media (max-width: 768px) {
+  .pool-cards {
     flex-direction: column;
-    text-align: center;
+    align-items: center;
   }
-  .hero-stocks {
-    justify-content: center;
+  .stake-cards {
+    flex-direction: column;
   }
-  .stock-panel {
-    flex: 1 1 calc(50% - 1rem);
+  .rewards-content {
+    flex-direction: column;
   }
-  .positions-section {
-    margin-top: 2rem;
+  .site-nav {
+    gap: 0.75rem;
+  }
+  .hero-title {
+    font-size: 2rem;
   }
 }
 
-@media (max-width: 600px) {
-  .stock-panel {
-    flex: 1 1 100%;
-  }
-  .benefits-grid {
-    flex-direction: column;
-  }
-  .benefit-symbol {
-    display: none;
-  }
-  .benefit-item {
-    flex: 1 1 auto;
-  }
-  .positions-title {
-    font-size: 1.5rem;
-  }
-  .position-card {
-    padding: 1rem;
-  }
+/* Styling for signup form pages */
+.signup-wrapper {
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+  background-color: var(--color-light);
+  position: relative;
+}
+
+.signup-wrapper h2 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.signup-wrapper .form-group {
+  margin-bottom: 1.2rem;
+}
+
+.signup-wrapper input,
+.signup-wrapper select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.signup-wrapper .action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.signup-wrapper .action-buttons button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.signup-wrapper .action-buttons .next-btn {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+.signup-wrapper .action-buttons .back-btn {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+}
+
+.signup-wrapper .action-buttons button:hover {
+  opacity: 0.9;
+}
+
+.signup-wrapper .step {
+  display: none;
+}
+
+.signup-wrapper .step.active {
+  display: block;
+}
+
+.signup-wrapper .pet-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.signup-wrapper .pet-card {
+  border: 1px solid var(--color-secondary);
+  border-radius: 6px;
+  text-align: center;
+  padding: 0.8rem 0.6rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.signup-wrapper .pet-card.selected {
+  background-color: var(--color-secondary);
+  color: var(--color-light);
+}
+
+.signup-wrapper .pet-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0.5rem;
+}
+
+/* Decorative treasure chest in signup flow */
+.signup-wrapper .treasure-img {
+  position: absolute;
+  bottom: -60px;
+  right: -20px;
+  width: 120px;
+  opacity: 0.8;
+  pointer-events: none;
 }

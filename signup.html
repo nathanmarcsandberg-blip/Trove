@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up – Trove</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo-container">
+        <div class="logo-circle"><span>T</span></div>
+        <span class="logo-text">TROVE</span>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html#how">how</a>
+        <a href="index.html#assets">assets</a>
+        <a href="index.html#contact">contact</a>
+        <a href="index.html" class="login-btn">log in</a>
+      </nav>
+    </header>
+    <main>
+      <div class="signup-wrapper">
+        <!-- Step 1 -->
+        <div class="step step-1 active">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <input type="text" id="firstName" placeholder="First name" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="surname" placeholder="Surname" required />
+          </div>
+          <div class="form-group">
+            <input type="date" id="dob" placeholder="Date of birth" required />
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="step step-2">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <input type="password" id="password" placeholder="Create password" required />
+          </div>
+          <div class="form-group">
+            <input type="password" id="confirmPassword" placeholder="Confirm password" required />
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" placeholder="Email" required />
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- Step 3 -->
+        <div class="step step-3">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <input type="tel" id="phone" placeholder="Phone number" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="country" placeholder="Country" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="address" placeholder="Find address" required />
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- Step 4 -->
+        <div class="step step-4">
+          <h2>welcome to trove</h2>
+          <div class="form-group">
+            <select id="currency" required>
+              <option value="" disabled selected>Choose currency</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="BTC">BTC</option>
+              <option value="ETH">ETH</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select id="theme" required>
+              <option value="" disabled selected>Light mode, dark mode</option>
+              <option value="light">Light mode</option>
+              <option value="dark">Dark mode</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="twofa" /> Enable 2FA?
+            </label>
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- Step 5 -->
+        <div class="step step-5">
+          <h2>welcome to trove</h2>
+          <p style="margin-bottom: 1rem; font-weight: 600;">adopt a pet! completely optional. completely worthwhile</p>
+          <p style="margin-top: -0.5rem; font-size: 0.85rem; color: var(--color-grey);">look after your pet to earn extra benefits on trove such as shorter unlock periods, entries into cash raffles, and more</p>
+          <div class="pet-options">
+            <div class="pet-card" data-pet="Dog">
+              <img src="assets/dog.png" alt="Dog" />
+              <div>Dog</div>
+            </div>
+            <div class="pet-card" data-pet="Cat">
+              <img src="assets/cat.png" alt="Cat" />
+              <div>Cat</div>
+            </div>
+            <div class="pet-card" data-pet="Fish">
+              <img src="assets/fish.png" alt="Fish" />
+              <div>Fish</div>
+            </div>
+            <div class="pet-card" data-pet="Dragon">
+              <img src="assets/dragon.png" alt="Dragon" />
+              <div>Dragon</div>
+            </div>
+            <div class="pet-card" data-pet="Custom">
+              <div style="font-size: 0.95rem; margin-top: 1.25rem;">Custom<br />Request</div>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="back-btn">Back</button>
+            <button type="button" class="next-btn">Finish</button>
+          </div>
+        </div>
+        <!-- Decorative treasure chest -->
+        <img class="treasure-img" src="assets/treasure-chest.png" alt="Treasure chest" />
+      </div>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

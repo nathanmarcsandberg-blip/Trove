@@ -1,54 +1,57 @@
 /*
- * Trove MVP script
- * Simulates changing 24h return percentage for the position card.
+ * JavaScript for Trove landing page and signup flow
  */
 
-function simulateReturn() {
-  const percentEl = document.getElementById('return-percent');
-  if (!percentEl) return;
-  let current = parseFloat(percentEl.textContent);
-  // update every 5 seconds
-  setInterval(() => {
-    // random change between -0.5 and +0.5 percentage points
-    const change = (Math.random() - 0.5) * 1;
-    let newVal = current + change;
-    // clamp to -10% to +10%
-    newVal = Math.max(-10, Math.min(10, newVal));
-    current = newVal;
-    const sign = newVal >= 0 ? '+' : '';
-    percentEl.textContent = `${sign}${newVal.toFixed(2)}%`;
-    // color update
-    if (newVal >= 0) {
-      percentEl.style.color = '#059669';
-    } else {
-      percentEl.style.color = '#dc2626';
-    }
-  }, 5000);
-}
-
+// Basic sign‑up flow management
 document.addEventListener('DOMContentLoaded', () => {
-  simulateReturn();
-  // Handle join form submission
-  const joinForm = document.getElementById('join-form');
-  if (joinForm) {
-    joinForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const nameField = document.getElementById('join-name');
-      const emailField = document.getElementById('join-email');
-      const messageField = document.getElementById('join-message');
-      const name = nameField ? nameField.value.trim() : '';
-      const email = emailField ? emailField.value.trim() : '';
-      const message = messageField ? messageField.value.trim() : '';
-      let feedback = document.getElementById('join-feedback');
-      if (!feedback) {
-        feedback = document.createElement('p');
-        feedback.id = 'join-feedback';
-        feedback.style.marginTop = '1rem';
-        feedback.style.color = '#059669';
-        joinForm.appendChild(feedback);
+  const signupContainer = document.querySelector('.signup-wrapper');
+  // Only run sign‑up logic if signup container exists on this page
+  if (signupContainer) {
+    const steps = Array.from(signupContainer.querySelectorAll('.step'));
+    let currentStep = 0;
+    const formData = {};
+
+    function showStep(index) {
+      steps.forEach((step, i) => {
+        step.classList.toggle('active', i === index);
+      });
+    }
+
+    showStep(currentStep);
+
+    // Next button events
+    signupContainer.addEventListener('click', (e) => {
+      if (e.target.matches('.next-btn')) {
+        // Collect input values from current step
+        const activeStep = steps[currentStep];
+        const inputs = activeStep.querySelectorAll('input, select');
+        inputs.forEach((input) => {
+          formData[input.id || input.name || input.placeholder] = input.value;
+        });
+        if (currentStep < steps.length - 1) {
+          currentStep += 1;
+          showStep(currentStep);
+        } else {
+          // All steps completed
+          // Display success message or redirect back to home
+          signupContainer.innerHTML = `<h2>Welcome to Trove!</h2><p>Thanks for signing up, ${formData['firstName'] || formData['First name']}!</p><p>We’re excited to have you on board.</p><a href="index.html" class="primary-btn">Return to home</a>`;
+        }
       }
-      feedback.textContent = `Thanks ${name || 'there'}! We’ll reach out to ${email} soon.`;
-      joinForm.reset();
+      // Back button events
+      if (e.target.matches('.back-btn')) {
+        if (currentStep > 0) {
+          currentStep -= 1;
+          showStep(currentStep);
+        }
+      }
+      // Pet card selection
+      if (e.target.closest('.pet-card')) {
+        const card = e.target.closest('.pet-card');
+        // Toggle selection for single choice
+        signupContainer.querySelectorAll('.pet-card').forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+        formData['pet'] = card.dataset.pet;
+      }
     });
   }
 });

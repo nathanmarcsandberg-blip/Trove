@@ -1,122 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trove – Rewarding Long‑Term Investors</title>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
-</head>
-<body>
-  <!-- Header with logo and navigation -->
-  <header class="main-header">
-    <div class="logo">
-      <!-- Use provided logo and icon instead of plain text -->
-      <div class="logo-icon-img">
-        <img src="assets/logo512.png" alt="Trove logo" class="logo-img">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trove</title>
+    <!-- Import a simple web font for a clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header with logo and navigation -->
+    <header class="site-header">
+      <div class="logo-container">
+        <div class="logo-circle"><span>T</span></div>
+        <span class="logo-text">TROVE</span>
       </div>
-      <span class="logo-text">Trove</span>
-    </div>
-    <nav class="top-nav">
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#what">What</a></li>
-        <li><a href="#how">How</a></li>
-        <li><a href="#treasury">Treasury</a></li>
-        <li><a href="#join">Join</a></li>
-        <li><a href="positions.html">Positions</a></li>
-      </ul>
-    </nav>
-    <a href="#" class="account-btn">Account</a>
-  </header>
-  <!-- Page wrapper with dotted background -->
-  <div class="page-container">
-    <!-- Hero / Intro Section -->
-    <section id="home" class="hero-section">
-      <div class="hero-content">
-        <h1 class="site-name">Trove</h1>
-        <p class="tagline">Rewarding Long‑Term Investors Better</p>
-        <p class="subtagline">Buy stocks and crypto with enhanced dividends and extra yields.</p>
-        <div class="hero-buttons">
-          <a href="#" class="btn btn-primary">Start Now</a>
-          <a href="#" class="btn btn-secondary">Start Now</a>
-        </div>
-      </div>
-      <div class="hero-stocks">
-        <div class="stock-panel">
-          <p class="stock-name">Johnson &amp; Johnson</p>
-          <p class="stock-apy">Minimum APY <strong>3.21%</strong></p>
-        </div>
-        <div class="stock-panel">
-          <p class="stock-name">Procter &amp; Gamble</p>
-          <p class="stock-apy">Minimum APY <strong>2.56%</strong></p>
-        </div>
-        <div class="stock-panel">
-          <p class="stock-name">Coca‑Cola</p>
-          <p class="stock-apy">Minimum APY <strong>3.05%</strong></p>
-        </div>
-      </div>
-    </section>
+      <nav class="site-nav">
+        <a href="#how">how</a>
+        <a href="#assets">assets</a>
+        <a href="#contact">contact</a>
+        <a href="#" class="login-btn">log in</a>
+      </nav>
+    </header>
 
-    <!-- Benefits equation section redesigned with icons and creative connectors -->
-    <section class="benefits-section">
-      <div class="benefits-wrapper">
-        <div class="benefit-card">
-          <div class="benefit-icon loyalty-icon"></div>
-          <h3>Loyalty</h3>
+    <main>
+      <!-- Hero section with tagline and call to action -->
+      <section class="hero" id="home">
+        <h1 class="hero-title">Rewarding long‑term investors</h1>
+        <p class="hero-subtitle">buy stocks, crypto, and more, with enhanced dividends and better yields than anywhere else</p>
+        <a href="signup.html" class="primary-btn">Join</a>
+      </section>
+
+      <!-- Treasury pool section -->
+      <section class="treasury-pool" id="treasury">
+        <h2 class="section-heading">Treasury Pool</h2>
+        <div class="pool-cards">
+          <div class="pool-card">
+            <div class="circle black"><span>$129,822</span></div>
+            <p class="metric-label">total treasure</p>
+          </div>
+          <div class="pool-card">
+            <div class="circle black"><span>$115,930</span></div>
+            <p class="metric-label">staked assets</p>
+          </div>
+          <div class="pool-card">
+            <div class="circle black"><span>30,012</span></div>
+            <p class="metric-label">users</p>
+          </div>
         </div>
-        <div class="benefit-connector">+</div>
-        <div class="benefit-card">
-          <div class="benefit-icon dividends-icon"></div>
-          <h3>Dividends</h3>
+      </section>
+
+      <!-- Staking breakdown section -->
+      <section class="staking-breakdown" id="how">
+        <h2 class="section-heading">Staking Breakdown</h2>
+        <div class="stake-cards">
+          <div class="stake-card">
+            <img src="assets/bitcoin.png" alt="Bitcoin" />
+            <h3>BTC Growth Pool</h3>
+            <p>total staked – $55,901</p>
+            <p>yield – 5.2% APY</p>
+          </div>
+          <div class="stake-card">
+            <img src="assets/ethereum.png" alt="Ethereum" />
+            <h3>ETH Stability Pool</h3>
+            <p>total staked – $39,400</p>
+            <p>yield – 4.5% APY</p>
+          </div>
+          <div class="stake-card">
+            <img src="assets/usdc.png" alt="USDC" />
+            <h3>USDC Treasury Pool</h3>
+            <p>total staked – $22,842</p>
+            <p>yield – 6% APY</p>
+          </div>
         </div>
-        <div class="benefit-connector">+</div>
-        <div class="benefit-card">
-          <div class="benefit-icon staking-icon"></div>
-          <h3>Staking Yields</h3>
+      </section>
+
+      <!-- User rewards section -->
+      <section class="user-rewards" id="assets">
+        <h2 class="section-heading">User Rewards</h2>
+        <div class="rewards-content">
+          <div class="rewards-text">
+            <h3>users</h3>
+            <p>26,302 users have received staking rewards</p>
+            <p>28,402 users have received enhanced dividends</p>
+            <h3>new members</h3>
+            <p>1,028 new users have joined Trove in the last 30 days! Together we grow the pool</p>
+            <h3>fee pool</h3>
+            <p>We’re always trying to find ways to build the treasure trove. We currently have 8 feeds into the pool</p>
+            <div class="rewards-actions">
+              <a href="#" class="secondary-btn">refer a friend</a>
+              <a href="#" class="secondary-btn">suggest more ideas!</a>
+            </div>
+          </div>
+          <div class="rewards-image">
+            <img src="assets/fruit-camera.png" alt="Fruit basket and camera" />
+          </div>
         </div>
-        <div class="benefit-connector">=</div>
-        <div class="benefit-card result-card">
-          <div class="benefit-icon returns-icon"></div>
-          <h3>Better Returns</h3>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Info Sections -->
-    <section id="what" class="info-section">
-      <h2>What?</h2>
-      <p>We allow you to invest in the same major companies but with better yields than anywhere else. Why should traders and short‑term investors be rewarded when you stick it out with these companies for months or years? You take priority; you take the rewards.</p>
-      <p>On top of this we’re always finding ways to reward our users more.</p>
-    </section>
+      <!-- Contact section (placeholder) -->
+      <section class="contact-section" id="contact">
+        <h2 class="section-heading">Contact</h2>
+        <p>If you’d like to get in touch, please email us at <a href="mailto:hello@trove.com">hello@trove.com</a>.</p>
+      </section>
+    </main>
 
-    <section id="how" class="info-section">
-      <h2>How?</h2>
-      <p>To prioritise you against short‑term buyers, we only allow dividends to be shared with users who opt in or “stake” their stocks and have held for at least 60 days. This ensures that with new users joining the platform you will always receive their share of dividends before they reach the 60‑day milestone.</p>
-      <p>In addition to this, as extra yield and protection against slow user growth, we share all of our treasury yields with our users.</p>
-    </section>
+    <footer class="site-footer">
+      <p>&copy; 2025 Trove. All rights reserved.</p>
+    </footer>
 
-    <section id="treasury" class="info-section">
-      <h2>Treasury</h2>
-      <p>The Treasury is our treasure trove! Fifty percent of all fees generated at Trove are put toward growing our crypto treasury. Our entire treasury is staked sporadically across multiple staking pools. All yields received are shared with users to provide extra incentive and reward.</p>
-      <p>This allows you to benefit from other user actions, including whales or users who joined before you or have stopped using the platform.</p>
-    </section>
-
-    <section id="join" class="info-section join-section">
-      <h2>Join</h2>
-      <p>Like our idea? Trove is currently seeking VCs or investors. Enquire below to speak to us.</p>
-      <form id="join-form">
-        <input type="text" id="join-name" placeholder="Your Name" required>
-        <input type="email" id="join-email" placeholder="Your Email" required>
-        <textarea id="join-message" rows="4" placeholder="Your message" required></textarea>
-        <button type="submit" class="btn btn-primary">Enquire</button>
-      </form>
-    </section>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
