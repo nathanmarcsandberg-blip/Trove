@@ -1,3 +1,18 @@
+.logo-icon-img {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon-img img.logo-img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+}
 /*
  * Stylesheet for the Trove MVP wireframe.
  * Colours: black and white with blue accents.
@@ -12,7 +27,19 @@
 body {
   font-family: 'Inter', sans-serif;
   background-color: #ffffff;
-  color: #1f2937; /* dark slate */
+  color: var(--accent-black);
+}
+
+/* Colour variables for deeper royal blue and black accents */
+:root {
+  --primary-blue: #003366; /* deeper royal blue */
+  --secondary-blue: #00224d; /* darker shade for hover */
+  --accent-black: #0f172a;
+  --border-grey: #e5e7eb;
+  --light-bg: #f9fafb;
+  --green: #059669;
+  --red: #dc2626;
+  --yellow: #fbbf24;
 }
 
 /* Header */
@@ -21,7 +48,7 @@ body {
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-grey);
   border-radius: 8px;
   padding: 1rem 2rem;
   margin: 1rem auto;
@@ -34,23 +61,20 @@ body {
   gap: 0.5rem;
 }
 
-.logo-icon {
+/* Logo image override */
+.logo-img {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #0066cc;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
+  object-fit: cover;
+  /* Invert colours to ensure dark logo appears on light header */
+  filter: invert(1);
 }
 
 .logo-text {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--accent-black);
 }
 
 .top-nav ul {
@@ -63,12 +87,12 @@ body {
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--accent-black);
   transition: color 0.3s ease;
 }
 
 .top-nav a:hover {
-  color: #0066cc;
+  color: var(--primary-blue);
 }
 
 /* Account/login button in header */
@@ -77,32 +101,45 @@ body {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border: 1px solid #0066cc;
+  border: 1px solid var(--primary-blue);
   border-radius: 4px;
   background-color: #ffffff;
-  color: #0066cc;
+  color: var(--primary-blue);
   text-decoration: none;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .account-btn:hover {
-  background-color: #0066cc;
+  background-color: var(--primary-blue);
   color: #ffffff;
 }
 
 /* Info sections */
 .info-section {
   margin-top: 3rem;
-  padding: 2rem;
-  border: 1px solid #e5e7eb;
+  padding: 2rem 2rem 2rem 2.5rem;
+  border: 1px solid var(--border-grey);
   border-radius: 8px;
   background-color: #ffffff;
+  position: relative;
+}
+
+/* vertical coloured bar for info sections */
+.info-section::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: 4px;
+  background-color: var(--primary-blue);
+  border-radius: 2px;
 }
 
 .info-section h2 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--accent-black);
   margin-bottom: 1rem;
 }
 
@@ -128,21 +165,21 @@ body {
   border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 0.9rem;
-  color: #1f2937;
-  background-color: #f9fafb;
+  color: var(--accent-black);
+  background-color: var(--light-bg);
 }
 
 .join-section input:focus,
 .join-section textarea:focus {
   outline: none;
-  border-color: #0066cc;
+  border-color: var(--primary-blue);
   background-color: #ffffff;
 }
 
 .join-section button.btn-primary {
   align-self: flex-start;
   padding: 0.75rem 1.5rem;
-  background-color: #0066cc;
+  background-color: var(--primary-blue);
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -153,7 +190,7 @@ body {
 }
 
 .join-section button.btn-primary:hover {
-  background-color: #004f9a;
+  background-color: var(--secondary-blue);
 }
 
 .page-container {
@@ -161,14 +198,14 @@ body {
   margin: 0 auto;
   padding: 2rem 1rem;
   /* subtle dotted background */
-  background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+  background-image: radial-gradient(var(--border-grey) 1px, transparent 1px);
   background-size: 16px 16px;
 }
 
 /* Hero Section */
 .hero-section {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-grey);
   border-radius: 8px;
   padding: 2rem;
   display: flex;
@@ -184,14 +221,14 @@ body {
 .site-name {
   font-size: 3rem;
   font-weight: 700;
-  color: #0f172a; /* dark text */
+  color: var(--accent-black);
   margin-bottom: 0.5rem;
 }
 
 .tagline {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #0066cc; /* blue accent for tagline */
+  color: var(--primary-blue);
   margin-bottom: 0.3rem;
 }
 
@@ -217,15 +254,15 @@ body {
 }
 
 .btn-primary {
-  background-color: #0066cc;
+  background-color: var(--primary-blue);
   color: #fff;
   border: none;
 }
 
 .btn-secondary {
   background-color: #ffffff;
-  color: #0066cc;
-  border: 2px solid #0066cc;
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
 }
 
 /* Stock panels in hero */
@@ -239,24 +276,30 @@ body {
 }
 
 .stock-panel {
-  border: 2px solid #0066cc;
+  border: 2px solid var(--primary-blue);
   border-radius: 8px;
   padding: 1rem;
   background-color: #ffffff;
   flex: 1 1 calc(33.333% - 1rem);
   min-width: 150px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   text-align: center;
 }
 
 .stock-name {
   font-weight: 700;
-  color: #0066cc;
+  color: var(--primary-blue);
   margin-bottom: 0.25rem;
 }
 
 .stock-apy {
   font-size: 0.85rem;
   color: #4b5563;
+  margin-top: auto;
 }
 
 /* Benefits equation */
@@ -307,7 +350,7 @@ body {
   font-weight: 700;
   text-align: center;
   margin-bottom: 0.5rem;
-  color: #0f172a;
+  color: var(--accent-black);
 }
 
 .positions-categories {
@@ -336,7 +379,7 @@ body {
 .position-logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0066cc;
+  color: var(--primary-blue);
 }
 
 .position-return {
@@ -382,13 +425,13 @@ body {
 .progress-heading {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #1f2937;
+  color: var(--accent-black);
 }
 
 .progress-bar {
   position: relative;
   height: 4px;
-  background-color: #e5e7eb;
+  background-color: var(--border-grey);
   border-radius: 2px;
   width: 100%;
 }
@@ -398,7 +441,7 @@ body {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #0066cc;
+  background-color: var(--primary-blue);
   width: 40%;
   border-radius: 2px;
 }
@@ -475,7 +518,7 @@ body {
 }
 
 .btn-blue {
-  background-color: #0066cc;
+  background-color: var(--primary-blue);
   color: #ffffff;
   border: none;
   cursor: not-allowed;
@@ -483,6 +526,60 @@ body {
   border-radius: 4px;
   font-weight: 600;
   font-size: 0.85rem;
+}
+
+/* Redesigned benefits section styles */
+.benefits-section {
+  margin-top: 2rem;
+}
+
+.benefits-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.benefit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border: 2px solid var(--primary-blue);
+  border-radius: 8px;
+  background-color: #ffffff;
+  width: 150px;
+  text-align: center;
+  color: var(--accent-black);
+}
+
+.benefit-card h3 {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.benefit-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+}
+
+/* Result card uses inverted colours */
+.result-card {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+  color: #ffffff;
+}
+
+.benefit-connector {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin: 0 0.5rem;
 }
 
 /* Responsive adjustments */

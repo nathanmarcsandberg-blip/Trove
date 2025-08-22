@@ -8,13 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <!-- Header with logo and navigation -->
   <header class="main-header">
     <div class="logo">
-      <span class="logo-icon">T</span>
+      <!-- Use provided logo and icon instead of plain text -->
+      <div class="logo-icon-img">
+        <img src="assets/logo512.png" alt="Trove logo" class="logo-img">
+      </div>
       <span class="logo-text">Trove</span>
     </div>
     <nav class="top-nav">
@@ -45,29 +48,41 @@
       <div class="hero-stocks">
         <div class="stock-panel">
           <p class="stock-name">Johnson &amp; Johnson</p>
-          <p class="stock-apy">Minimum APY — <strong>3.21%</strong></p>
+          <p class="stock-apy">Minimum APY <strong>3.21%</strong></p>
         </div>
         <div class="stock-panel">
           <p class="stock-name">Procter &amp; Gamble</p>
-          <p class="stock-apy">Minimum APY — <strong>2.56%</strong></p>
+          <p class="stock-apy">Minimum APY <strong>2.56%</strong></p>
         </div>
         <div class="stock-panel">
           <p class="stock-name">Coca‑Cola</p>
-          <p class="stock-apy">Minimum APY — <strong>3.05%</strong></p>
+          <p class="stock-apy">Minimum APY <strong>3.05%</strong></p>
         </div>
       </div>
     </section>
 
-    <!-- Benefits equation section -->
+    <!-- Benefits equation section redesigned with icons and creative connectors -->
     <section class="benefits-section">
-      <div class="benefits-grid">
-        <div class="benefit-item">Loyalty</div>
-        <div class="benefit-symbol">+</div>
-        <div class="benefit-item">Dividends</div>
-        <div class="benefit-symbol">+</div>
-        <div class="benefit-item">Staking Yields</div>
-        <div class="benefit-symbol">=</div>
-        <div class="benefit-item benefit-result">Better Returns</div>
+      <div class="benefits-wrapper">
+        <div class="benefit-card">
+          <div class="benefit-icon loyalty-icon"></div>
+          <h3>Loyalty</h3>
+        </div>
+        <div class="benefit-connector">+</div>
+        <div class="benefit-card">
+          <div class="benefit-icon dividends-icon"></div>
+          <h3>Dividends</h3>
+        </div>
+        <div class="benefit-connector">+</div>
+        <div class="benefit-card">
+          <div class="benefit-icon staking-icon"></div>
+          <h3>Staking Yields</h3>
+        </div>
+        <div class="benefit-connector">=</div>
+        <div class="benefit-card result-card">
+          <div class="benefit-icon returns-icon"></div>
+          <h3>Better Returns</h3>
+        </div>
       </div>
     </section>
 
