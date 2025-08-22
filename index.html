@@ -1,114 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trove</title>
-    <!-- Import a simple web font for a clean, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- Header with logo and navigation -->
-    <header class="site-header">
-      <div class="logo-container">
-        <div class="logo-circle"><span>T</span></div>
-        <span class="logo-text">TROVE</span>
-      </div>
-      <nav class="site-nav">
-        <a href="#how">how</a>
-        <a href="#assets">assets</a>
-        <a href="#contact">contact</a>
-        <a href="#" class="login-btn">log in</a>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trove</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="hero-logo.png" alt="Trove Logo" class="logo">
+    <nav>
+      <a href="index.html">how</a>
+      <a href="positions.html">assets</a>
+      <a href="signup.html">contact</a>
+      <button onclick="location.href='signup.html'">log in</button>
+    </nav>
+  </header>
 
-    <main>
-      <!-- Hero section with tagline and call to action -->
-      <section class="hero" id="home">
-        <h1 class="hero-title">Rewarding long‑term investors</h1>
-        <p class="hero-subtitle">buy stocks, crypto, and more, with enhanced dividends and better yields than anywhere else</p>
-        <a href="signup.html" class="primary-btn">Join</a>
-      </section>
+  <section class="hero">
+    <h1>TROVE</h1>
+    <p>Rewarding long-term investors<br>
+       buy stocks, crypto, and more, with enhanced dividends<br>
+       and better yields than anywhere else</p>
+    <button onclick="location.href='signup.html'">Join</button>
+  </section>
 
-      <!-- Treasury pool section -->
-      <section class="treasury-pool" id="treasury">
-        <h2 class="section-heading">Treasury Pool</h2>
-        <div class="pool-cards">
-          <div class="pool-card">
-            <div class="circle black"><span>$129,822</span></div>
-            <p class="metric-label">total treasure</p>
-          </div>
-          <div class="pool-card">
-            <div class="circle black"><span>$115,930</span></div>
-            <p class="metric-label">staked assets</p>
-          </div>
-          <div class="pool-card">
-            <div class="circle black"><span>30,012</span></div>
-            <p class="metric-label">users</p>
-          </div>
-        </div>
-      </section>
+  <section class="treasury">
+    <div class="circle">
+      <p>$129,822<br><span>total treasure</span></p>
+    </div>
+    <div class="circle">
+      <p>$115,930<br><span>staked assets</span></p>
+    </div>
+    <div class="circle">
+      <p>30,012<br><span>users</span></p>
+    </div>
+  </section>
 
-      <!-- Staking breakdown section -->
-      <section class="staking-breakdown" id="how">
-        <h2 class="section-heading">Staking Breakdown</h2>
-        <div class="stake-cards">
-          <div class="stake-card">
-            <img src="assets/bitcoin.png" alt="Bitcoin" />
-            <h3>BTC Growth Pool</h3>
-            <p>total staked – $55,901</p>
-            <p>yield – 5.2% APY</p>
-          </div>
-          <div class="stake-card">
-            <img src="assets/ethereum.png" alt="Ethereum" />
-            <h3>ETH Stability Pool</h3>
-            <p>total staked – $39,400</p>
-            <p>yield – 4.5% APY</p>
-          </div>
-          <div class="stake-card">
-            <img src="assets/usdc.png" alt="USDC" />
-            <h3>USDC Treasury Pool</h3>
-            <p>total staked – $22,842</p>
-            <p>yield – 6% APY</p>
-          </div>
-        </div>
-      </section>
+  <h2>Staking Breakdown</h2>
+  <div class="staking">
+    <div>
+      <img src="bitcoin.png" alt="Bitcoin">
+      <p><strong>BTC Growth Pool</strong><br>
+         total staked - $55,901<br>
+         yield - 5.2% APY</p>
+    </div>
+    <div>
+      <img src="ethereum.png" alt="Ethereum">
+      <p><strong>ETH Stability Pool</strong><br>
+         total staked - $39,400<br>
+         yield - 4.5%</p>
+    </div>
+    <div>
+      <img src="usdc.png" alt="USDC">
+      <p><strong>USDC Treasury Pool</strong><br>
+         total staked - $22,842<br>
+         yield - 6%</p>
+    </div>
+  </div>
 
-      <!-- User rewards section -->
-      <section class="user-rewards" id="assets">
-        <h2 class="section-heading">User Rewards</h2>
-        <div class="rewards-content">
-          <div class="rewards-text">
-            <h3>users</h3>
-            <p>26,302 users have received staking rewards</p>
-            <p>28,402 users have received enhanced dividends</p>
-            <h3>new members</h3>
-            <p>1,028 new users have joined Trove in the last 30 days! Together we grow the pool</p>
-            <h3>fee pool</h3>
-            <p>We’re always trying to find ways to build the treasure trove. We currently have 8 feeds into the pool</p>
-            <div class="rewards-actions">
-              <a href="#" class="secondary-btn">refer a friend</a>
-              <a href="#" class="secondary-btn">suggest more ideas!</a>
-            </div>
-          </div>
-          <div class="rewards-image">
-            <img src="assets/fruit-camera.png" alt="Fruit basket and camera" />
-          </div>
-        </div>
-      </section>
+  <section class="rewards">
+    <h2>User Rewards</h2>
+    <p><strong>users</strong><br>
+       26,302 users have received staking rewards<br>
+       28,402 users have received enhanced dividends</p>
+    <p><strong>new members</strong><br>
+       1028 new users have joined Trove in the last 30 days! together we grow the pool</p>
+    <p><strong>fee pool</strong><br>
+       we’re always trying to find ways to build the treasure trove. we currently have 8 feeds into the pool</p>
+    <button>refer a friend</button>
+    <button>suggest more ideas!</button>
+    <img src="fruit-camera.png" alt="Fruit camera" class="side-img">
+  </section>
 
-      <!-- Contact section (placeholder) -->
-      <section class="contact-section" id="contact">
-        <h2 class="section-heading">Contact</h2>
-        <p>If you’d like to get in touch, please email us at <a href="mailto:hello@trove.com">hello@trove.com</a>.</p>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <p>&copy; 2025 Trove. All rights reserved.</p>
-    </footer>
-
-    <script src="script.js"></script>
-  </body>
+  <script src="script.js"></script>
+</body>
 </html>
