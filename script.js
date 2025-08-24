@@ -71,6 +71,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })();
 
+  // ---------- Portfolio sticky bar update ----------
+  function updatePortfolioBar() {
+    const bar = document.getElementById('portfolioBar');
+    if (!bar) return;
+    const user = getCurrentUser();
+    if (!user) {
+      bar.style.display = 'none';
+      // remove bottom padding if bar hidden
+      document.body.style.paddingBottom = '';
+      return;
+    }
+    // compute total portfolio value (current prices)
+    let totalValue = 0;
+    if (Array.isArray(user.positions)) {
+      user.positions.forEach((pos) => {
+        const asset = ASSET_LIST.find((a) => a.name === pos.name);
+        const price = asset ? asset.price : pos.purchasePrice;
+        totalValue += pos.quantity * price;
+      });
+    }
+    const value = totalValue.toFixed(2);
+    // simulate 24h return between -3% and +3%
+    const return24h = (Math.random() * 6 - 3).toFixed(2);
+    // last month yield as 1% of total value (placeholder)
+    const lastMonthYield = (totalValue * 0.01).toFixed(2);
+    const returnColor = return24h >= 0 ? '#009900' : '#cc0000';
+    bar.innerHTML = `
+      <div class="portfolio-section">
+        <div class="portfolio-label"><a href="positions.html" class="portfolio-link">my portfolio</a></div>
+      </div>
+      <div class="portfolio-section">
+        <div style="font-weight:600;">24hrs</div>
+        <div style="color:${returnColor}; font-size:1.4rem; font-weight:600;">${return24h}%</div>
+      </div>
+      <div class="portfolio-section">
+        <div style="font-weight:600;">Portfolio Value</div>
+        <div class="portfolio-value">$${value}</div>
+      </div>
+      <div class="portfolio-section">
+        <div style="font-weight:600;">Last Month's Yield</div>
+        <div style="font-size:1.4rem; font-weight:600;">+$${lastMonthYield}</div>
+      </div>
+    `;
+    bar.style.display = 'flex';
+    // add padding to body so content doesn't hide behind bar
+    document.body.style.paddingBottom = '80px';
+  }
+
   // ---------- Dataset of available assets ----------
   const ASSET_LIST = [
     { name: 'Apple Inc.', class: 'dividend_paying_stock', yield: '0.46%', price: 227.76 },
@@ -219,6 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     html += '</tbody></table>';
     container.innerHTML = html;
+    // update the portfolio bar after rendering assets (may affect holdings)
+    updatePortfolioBar();
   }
 
   // ---------- Build the positions page if positions container present ----------
@@ -290,6 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>`;
     });
     container.innerHTML = html;
+    // update bottom bar when rendering positions
+    updatePortfolioBar();
   }
 
   // ---------- Event delegation for assets table actions ----------
@@ -472,6 +524,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAssetsTable();
   renderPositions();
 
+  // Initial update of portfolio bar on page load
+  updatePortfolioBar();
+
   // Update positions progress every second (for 2 minute maturity).
   setInterval(() => {
     renderPositions();
@@ -562,6 +617,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <a href="positions.html" class="secondary-btn" style="margin-left: 0.5rem;">Go to positions</a>
             </div>
           `;
+          // update portfolio bar now that a new user is created
+          updatePortfolioBar();
         }
       }
     });

@@ -803,6 +803,47 @@ a {
   gap: 0.5rem;
 }
 
+/* Sticky portfolio bar shown when user is logged in */
+.portfolio-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-top: 2px solid var(--color-primary);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  z-index: 1000;
+  font-size: 0.9rem;
+}
+.portfolio-bar .portfolio-section {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.portfolio-bar .portfolio-section:not(:first-child) {
+  border-left: 1px solid var(--color-primary);
+  padding-left: 1rem;
+}
+.portfolio-bar .portfolio-label {
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+.portfolio-bar .portfolio-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.portfolio-bar .portfolio-link {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
 .position-actions {
   display: flex;
   gap: 0.5rem;
