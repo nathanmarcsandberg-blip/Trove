@@ -239,24 +239,28 @@ document.addEventListener('DOMContentLoaded', () => {
       const daysHeld = Math.floor((now - purchaseDate) / (1000 * 60 * 60 * 24));
       const maturity = 60;
       const progress = Math.min(1, daysHeld / maturity);
-      const daysRemaining = Math.max(0, maturity - daysHeld);
-      // Simulate a 24h return between -3% and +3%
       const returnPerc = (Math.random() * 6 - 3).toFixed(2);
       const returnColor = returnPerc >= 0 ? '#009900' : '#cc0000';
-      html += `<div class="position-card" style="border:1px solid #ddd; border-radius:8px; padding:1.5rem; margin-bottom:2rem; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-          <h3 style="margin:0 0 0.5rem 0; font-size:1.4rem;">${name}</h3>
-          <div style="font-size:1.1rem; color:${returnColor};">${returnPerc}% <span style="font-size:0.85rem; color:#666;">(24h)</span></div>
+      // Determine progress circles: start is always red, middle is yellow until matured, end is green when mature else grey
+      const midClass = progress >= 1 ? 'complete' : 'current';
+      const endClass = progress >= 1 ? 'complete' : '';
+      html += `<div class="position-card">
+        <div class="card-top">
+          <h3 class="asset-name">${name}</h3>
+          <div class="return-24h" style="color:${returnColor};">${returnPerc}% <span style="font-size:0.85rem; color:#666;">(24h)</span></div>
         </div>
-        <p style="margin:0.5rem 0; font-size:0.9rem;">Quantity: ${holding.quantity}</p>
-        <p style="margin:0.5rem 0; font-size:0.9rem;">Days held: ${daysHeld} / ${maturity} (<span>${daysRemaining} days until rewards unlock</span>)</p>
-        <div style="height:8px; background:#eee; border-radius:4px; overflow:hidden; margin:0.5rem 0 1rem;">
-          <div style="width:${(progress * 100).toFixed(0)}%; height:100%; background:${progress >= 1 ? '#009900' : '#003366'};"></div>
+        <p>Quantity: ${holding.quantity}</p>
+        <div class="progress-row">
+          <div class="progress-circle start"></div>
+          <div class="progress-bar" style="--progress-width:${(progress * 100).toFixed(0)}%"></div>
+          <div class="progress-circle ${midClass}"></div>
+          <div class="progress-circle ${endClass}"></div>
+          <span style="font-size:0.8rem; margin-left:0.5rem; color:#666;">${Math.max(0, maturity - daysHeld)} days until rewards unlock</span>
         </div>
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-          <button class="position-action" data-action="sell" data-name="${name}" data-price="${assetInfo?.price || 0}">Sell</button>
-          ${assetInfo && assetInfo.class === 'dividend_paying_stock' ? (holding.staked ? `<button class="position-action" data-action="unstake" data-name="${name}">Unstake</button>` : `<button class="position-action" data-action="stake" data-name="${name}">Stake</button>`) : ''}
-          <button class="position-action" data-action="buy" data-name="${name}" data-price="${assetInfo?.price || 0}">Buy More</button>
+        <div class="position-actions">
+          <button class="position-action sell" data-action="sell" data-name="${name}" data-price="${assetInfo?.price || 0}">Sell</button>
+          ${assetInfo && assetInfo.class === 'dividend_paying_stock' ? (holding.staked ? `<button class="position-action unstake" data-action="unstake" data-name="${name}">Unstake</button>` : `<button class="position-action stake" data-action="stake" data-name="${name}">Stake</button>`) : ''}
+          <button class="position-action buy-more" data-action="buy" data-name="${name}" data-price="${assetInfo?.price || 0}">Buy More</button>
         </div>
       </div>`;
     });

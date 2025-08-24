@@ -16,6 +16,9 @@
   --color-light: #ffffff;
   --color-dark: #000000;
   --color-grey: #666666;
+  /* Additional status colours for positions progress and actions */
+  --color-success: #28a745;
+  --color-warning: #f5a623;
 }
 
 /* Styles for positions page categories row */
@@ -701,4 +704,108 @@ a {
   width: 120px;
   opacity: 0.8;
   pointer-events: none;
+}
+
+/* Position cards styling for portfolio page */
+.position-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--color-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
+}
+
+.position-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.position-card .asset-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.position-card .return-24h {
+  font-size: 1.2rem;
+}
+
+.position-card .progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.progress-bar {
+  flex-grow: 1;
+  height: 3px;
+  background: #eee;
+  position: relative;
+  border-radius: 2px;
+}
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-primary);
+  width: var(--progress-width, 0%);
+  transition: width 0.3s ease;
+}
+
+.progress-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #eee;
+}
+.progress-circle.current {
+  background: var(--color-warning);
+}
+.progress-circle.complete {
+  background: var(--color-success);
+}
+
+.progress-circle.start {
+  background: #cc0000;
+}
+
+.position-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.position-actions button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.position-actions button.sell {
+  background-color: #666;
+  color: var(--color-light);
+}
+.position-actions button.unstake {
+  background-color: var(--color-secondary);
+  color: var(--color-light);
+}
+.position-actions button.stake {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+.position-actions button.buy,
+.position-actions button.buy-more {
+  background-color: var(--color-success);
+  color: var(--color-light);
 }
