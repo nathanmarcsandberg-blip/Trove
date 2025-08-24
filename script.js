@@ -301,6 +301,56 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Chainlink', class: 'cryptocurrency', yield: '', price: 25.69452541 }
   ];
 
+  // ---------- State for assets search and filtering ----------
+  // Holds current search query string and selected category for filtering on the assets page.
+  let currentSearchQuery = '';
+  let selectedCategory = 'all';
+
+  // ---------- Render the assets list in card format ----------
+  // Render the list of assets in card form. Cards consist of a placeholder logo, a red sell
+  // button (hidden if the user does not own the asset), a central information column and
+  // a green buy button. Results are filtered by search query and selected category.
+  function renderAssetsList() {
+    const container = document.getElementById('assetsList');
+    if (!container) return;
+    const user = getCurrentUser();
+    // Lower‑case search term for case‑insensitive filtering
+    const searchLower = currentSearchQuery.trim().toLowerCase();
+    let filtered = ASSET_LIST.filter((asset) => asset.name.toLowerCase().includes(searchLower));
+    // Apply category filter (skip when "all")
+    if (selectedCategory && selectedCategory !== 'all') {
+      filtered = filtered.filter((asset) => asset.class === selectedCategory);
+    }
+    let html = '';
+    filtered.forEach((asset) => {
+      const holdings = user?.positions?.filter((p) => p.name === asset.name) || [];
+      const hasHoldings = holdings.length > 0;
+      const price = asset.price;
+      // Build a meta string: price plus optional yield. Include a green dollar icon when yield present
+      let meta = `$${price.toFixed(2)}`;
+      if (asset.yield) {
+        meta += ` - <span class="yield-icon">$</span>${asset.yield}`;
+      }
+      html += `<div class="asset-card">
+        <div class="asset-logo">logo</div>
+        <button class="asset-action asset-sell-btn ${hasHoldings ? '' : 'hidden'}" data-action="sell" data-name="${asset.name}" data-price="${price}">sell</button>
+        <div class="asset-info">
+          <span class="asset-name">${asset.name}</span>
+          <span class="asset-meta">${meta}</span>
+        </div>
+        <button class="asset-action asset-buy-btn" data-action="buy" data-name="${asset.name}" data-price="${price}">${hasHoldings ? 'buy more' : 'buy'}</button>
+      </div>`;
+    });
+    container.innerHTML = html;
+    updatePortfolioBar();
+  }
+
+  // (Deprecated) Search and category variables are replaced by currentSearchQuery and selectedCategory
+  // let assetSearchQuery = '';
+  // let assetFilterCategory = 'all';
+
+  // ---------- Build the assets list (card layout) if the page contains #assetsList ----------
+
   // ---------- Utilities for portfolio management ----------
   function getCurrentUser() {
     const users = getUsers();
@@ -340,44 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------- Build the assets table if the page contains #assetsTable ----------
-  function renderAssetsTable() {
-    const container = document.getElementById('assetsTable');
-    if (!container) return;
-    const user = getCurrentUser();
-    // Build table structure
-    let html = '<table class="assets-table" style="width:100%; border-collapse: collapse;">';
-    html += '<thead><tr><th style="text-align:left; padding:0.5rem 0.75rem;">Asset</th><th style="text-align:left; padding:0.5rem 0.75rem;">Class</th><th style="text-align:right; padding:0.5rem 0.75rem;">Yield</th><th style="text-align:right; padding:0.5rem 0.75rem;">Price (USD)</th><th style="text-align:center; padding:0.5rem 0.75rem;">Action</th></tr></thead>';
-    html += '<tbody>';
-    ASSET_LIST.forEach((asset) => {
-      const key = asset.name;
-      const userHoldings = user?.positions?.filter((p) => p.name === key) || [];
-      html += '<tr style="border-top: 1px solid #eee;">';
-      html += `<td style="padding:0.5rem 0.75rem;">${asset.name}</td>`;
-      // replace underscores with spaces and capitalise first letter of each word
-      const friendlyClass = asset.class.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-      html += `<td style="padding:0.5rem 0.75rem;">${friendlyClass}</td>`;
-      html += `<td style="padding:0.5rem 0.75rem; text-align:right;">${asset.yield || '—'}</td>`;
-      html += `<td style="padding:0.5rem 0.75rem; text-align:right;">$${asset.price.toFixed(2)}</td>`;
-      html += '<td style="padding:0.5rem 0.75rem; text-align:center;">';
-      if (!user) {
-        html += '<span style="color: #888; font-size:0.85rem;">Log in to trade</span>';
-      } else {
-        if (userHoldings.length === 0) {
-          // user does not own any of this asset
-          html += `<button class="asset-action buy" data-action="buy" data-name="${key}" data-price="${asset.price}">Buy</button>`;
-        } else {
-          // user owns at least one position; allow sell and buy more
-          html += `<button class="asset-action sell" data-action="sell" data-name="${key}" data-price="${asset.price}">Sell</button>`;
-          html += `<button class="asset-action buy" data-action="buy" data-name="${key}" data-price="${asset.price}">Buy More</button>`;
-        }
-      }
-      html += '</td></tr>';
-    });
-    html += '</tbody></table>';
-    container.innerHTML = html;
-    // update the portfolio bar after rendering assets (may affect holdings)
-    updatePortfolioBar();
-  }
+  // Removed legacy renderAssetsTable() function. The assets page now uses card layout only.
 
   // ---------- Build the positions page if positions container present ----------
   function renderPositions() {
@@ -486,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           saveCurrentUser(user);
           alert(`Successfully purchased ${quantity} of ${name}.`);
-          renderAssetsTable();
+          renderAssetsList();
           renderPositions();
           break;
         }
@@ -520,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
           user.balance += revenue;
           saveCurrentUser(user);
           alert(`Sold ${sellQty} of ${name} for $${revenue.toFixed(2)}.`);
-          renderAssetsTable();
+          renderAssetsList();
           renderPositions();
           break;
         }
@@ -561,7 +574,8 @@ document.addEventListener('DOMContentLoaded', () => {
             purchaseDate: Date.now()
           });
           saveCurrentUser(user);
-          renderAssetsTable();
+          // Re-render the assets list and positions after a buy action
+          renderAssetsList();
           renderPositions();
           break;
         }
@@ -588,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
               user.positions = user.positions.filter((p) => String(p.id) !== String(posId));
             }
             saveCurrentUser(user);
-            renderAssetsTable();
+            renderAssetsList();
             renderPositions();
             break;
           }
@@ -618,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
           user.positions = user.positions.filter((p) => p.quantity > 0);
           user.balance += revenue;
           saveCurrentUser(user);
-          renderAssetsTable();
+          renderAssetsList();
           renderPositions();
           break;
         }
@@ -629,8 +643,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Render assets table or positions page if present ----------
-  renderAssetsTable();
+  // Render the assets list (new card layout) and positions on page load
+  renderAssetsList();
   renderPositions();
+
+  // Attach search and category filter handlers on the assets page
+  const searchEl = document.getElementById('assetSearch');
+  if (searchEl) {
+    searchEl.addEventListener('input', () => {
+      currentSearchQuery = searchEl.value.trim().toLowerCase();
+      renderAssetsList();
+    });
+  }
+  const categoryEls = document.querySelectorAll('.category-btn');
+  if (categoryEls && categoryEls.length > 0) {
+    categoryEls.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        selectedCategory = btn.getAttribute('data-category') || 'all';
+        // Update active state
+        categoryEls.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderAssetsList();
+      });
+    });
+  }
 
   // Initial update of portfolio bar on page load
   updatePortfolioBar();

@@ -840,8 +840,26 @@ a {
   font-weight: 600;
 }
 .portfolio-bar .portfolio-link {
-  text-decoration: none;
-  color: var(--color-primary);
+  /* Style the portfolio link as a button centered in its section */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border-radius: 24px;
+  font-weight: 600;
+  text-transform: lowercase;
+  margin: 0 auto;
+  min-width: 8rem;
+}
+
+/* Center the first section of the portfolio bar */
+.portfolio-bar .portfolio-section:first-child {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
 }
 
 /* Account page styles */
@@ -867,6 +885,149 @@ a {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+}
+
+/* ------------------------------------------------------------------
+ * Assets page custom styles
+ *
+ * The assets page uses a card‑based layout instead of a table. Each card
+ * contains a small placeholder logo, a sell button (hidden if the user
+ * doesn’t own any units), the asset name with price and yield (if any),
+ * and a buy button. A search bar and category filter pills sit above
+ * the list.
+ */
+
+.assets-section {
+  padding: 3rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.assets-search-row {
+  margin: 0 auto 1rem;
+  max-width: 500px;
+}
+
+.asset-search {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+.asset-categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.category-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 20px;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.category-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+.category-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+/*
+ * Asset card styling: cards are displayed as a row with four columns – a placeholder
+ * logo, a red sell button, a central information column and a green buy button.
+ * The sell button is hidden when the user does not own the asset. Buttons fill
+ * their cells and have rounded corners to give a pill‑like appearance.
+ */
+.asset-card {
+  display: grid;
+  grid-template-columns: 60px 90px 1fr 90px;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-secondary);
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.asset-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.asset-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.asset-name {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  text-decoration: underline;
+}
+
+.asset-meta {
+  font-size: 0.85rem;
+  color: var(--color-grey);
+}
+
+.yield-icon {
+  color: var(--color-success);
+  font-weight: 600;
+  margin-right: 0.15rem;
+}
+
+.asset-sell-btn,
+.asset-buy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 42px;
+  border: none;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  text-transform: lowercase;
+  color: #fff;
+}
+
+.asset-sell-btn {
+  background-color: #d90429;
+}
+
+.asset-buy-btn {
+  background-color: #28a745;
+}
+
+/* Hide sell button when user has no holdings */
+.asset-sell-btn.hidden {
+  visibility: hidden;
 }
 .account-sidebar .profile-box {
   text-align: center;
@@ -1016,4 +1177,133 @@ a {
 .position-actions button.buy-more {
   background-color: var(--color-success);
   color: var(--color-light);
+}
+
+/* ===== Assets Page Enhancements ===== */
+
+/* Container for assets section on the assets page */
+.assets-section {
+  padding: 3rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Wrapper for the search bar */
+.assets-search-row {
+  margin: 0 auto 1rem;
+  max-width: 500px;
+}
+
+/* Search input styling */
+.asset-search {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Category buttons row */
+.asset-categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Individual category buttons */
+.category-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 20px;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.category-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+.category-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+/* Card for each asset */
+.asset-card {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-secondary);
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Placeholder logo box */
+.asset-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #999;
+  margin-right: 0.75rem;
+}
+
+/* Sell and buy buttons */
+.asset-sell-btn,
+.asset-buy-btn {
+  border: none;
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-transform: lowercase;
+}
+.asset-sell-btn {
+  background-color: #d90429;
+  color: #fff;
+  margin-right: 0.75rem;
+}
+.asset-buy-btn {
+  background-color: #28a745;
+  color: #fff;
+  margin-left: 0.75rem;
+}
+
+/* Hide sell button when user has no holdings */
+.asset-sell-btn.hidden {
+  visibility: hidden;
+}
+
+/* Asset information wrapper */
+.asset-info {
+  flex: 1 1 auto;
+  text-align: center;
+}
+.asset-name {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.asset-meta {
+  font-size: 0.85rem;
+  color: var(--color-grey);
+}
+.yield-icon {
+  color: var(--color-success);
+  font-weight: 600;
+  margin-right: 0.15rem;
 }

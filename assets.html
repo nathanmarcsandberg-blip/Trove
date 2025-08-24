@@ -27,14 +27,29 @@
       </nav>
     </header>
     <main>
-      <section class="how-section">
-        <h2 class="section-heading">Available Assets</h2>
-        <p style="max-width: 800px; margin: 0 auto; text-align: center">
-          Browse the assets available on Trove. If you’re logged in, you can buy,
-          sell, stake or unstake directly from this page. Otherwise, the table is
-          read‑only.
-        </p>
-        <div id="assetsTable" style="margin-top: 2rem; overflow-x: auto"></div>
+      <!-- Assets section: heading, search/filter controls and dynamic list -->
+      <section class="assets-section">
+        <!-- Page title -->
+        <h2 class="section-heading assets-title">Trove Assets</h2>
+        <!-- Search bar to filter assets by name -->
+        <div class="assets-search-row">
+          <input
+            type="text"
+            id="assetSearch"
+            class="asset-search"
+            placeholder="Search assets..."
+          />
+        </div>
+        <!-- Category filter buttons -->
+        <div class="asset-categories">
+          <button class="category-btn active" data-category="all">All</button>
+          <button class="category-btn" data-category="dividend_paying_stock">Dividend Stock</button>
+          <button class="category-btn" data-category="non_dividend_paying_stock">Non‑Dividend Stock</button>
+          <button class="category-btn" data-category="cryptocurrency">Crypto</button>
+          <button class="category-btn" data-category="commodity">Commodity</button>
+        </div>
+        <!-- Container for the dynamically generated asset cards -->
+        <div id="assetsList"></div>
       </section>
     </main>
     <footer class="site-footer">
