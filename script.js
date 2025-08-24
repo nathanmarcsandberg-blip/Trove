@@ -326,14 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const holdings = user?.positions?.filter((p) => p.name === asset.name) || [];
       const hasHoldings = holdings.length > 0;
       const price = asset.price;
-      // Build a meta string: price plus optional yield. Include a green dollar icon when yield present
+      // Build a meta string: price plus optional yield. Append the yield directly without a dollar icon
       let meta = `$${price.toFixed(2)}`;
       if (asset.yield) {
-        meta += ` - <span class="yield-icon">$</span>${asset.yield}`;
+        // append yield with styling but without the green dollar sign
+        meta += ` - <span class="yield-percent">${asset.yield}</span>`;
       }
       html += `<div class="asset-card">
         <div class="asset-logo">logo</div>
-        <button class="asset-action asset-sell-btn ${hasHoldings ? '' : 'hidden'}" data-action="sell" data-name="${asset.name}" data-price="${price}">sell</button>
+        <button class="asset-action asset-sell-btn ${hasHoldings ? '' : 'disabled'}" data-action="sell" data-name="${asset.name}" data-price="${price}">sell</button>
         <div class="asset-info">
           <span class="asset-name">${asset.name}</span>
           <span class="asset-meta">${meta}</span>
@@ -469,9 +470,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', (e) => {
     const assetBtn = e.target.closest('.asset-action');
     if (assetBtn) {
+      // If the sell button is disabled, notify and exit
+      if (assetBtn.classList.contains('disabled')) {
+        alert("You don't own this asset.");
+        return;
+      }
       const action = assetBtn.getAttribute('data-action');
       const name = assetBtn.getAttribute('data-name');
-      const price = parseFloat(assetBtn.getAttribute('data-price')); 
+      const price = parseFloat(assetBtn.getAttribute('data-price'));
       if (!name) return;
       const user = getCurrentUser();
       if (!user) {

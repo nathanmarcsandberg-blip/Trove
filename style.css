@@ -903,6 +903,14 @@ a {
   margin: 0 auto;
 }
 
+/* Centre and lowercase the assets page title */
+.assets-title {
+  text-align: center;
+  text-transform: lowercase;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
 .assets-search-row {
   margin: 0 auto 1rem;
   max-width: 500px;
@@ -1001,6 +1009,12 @@ a {
   margin-right: 0.15rem;
 }
 
+/* Style for yield percentage text (no icon) */
+.yield-percent {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
 .asset-sell-btn,
 .asset-buy-btn {
   display: inline-flex;
@@ -1023,6 +1037,18 @@ a {
 
 .asset-buy-btn {
   background-color: #28a745;
+}
+
+/* Disabled sell button styling when user has no holdings */
+.asset-sell-btn.disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.asset-sell-btn.disabled:hover {
+  /* lighten slightly on hover even when disabled */
+  background-color: #d4d4d4;
 }
 
 /* Hide sell button when user has no holdings */
