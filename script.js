@@ -598,9 +598,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typeof user.balance !== 'number') user.balance = 100000;
       if (!user.portfolio) user.portfolio = {};
       // persist user if loaded from CSV
-      const users = getUsers();
-      users[email] = user;
-      saveUsers(users);
+      const allUsers = getUsers();
+      allUsers[email] = user;
+      saveUsers(allUsers);
       setCurrent(email);
       // redirect to home page
       window.location.href = 'index.html';
