@@ -4,41 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login – Trove</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Header -->
+    <!-- Header with logo linking home and navigation -->
     <header class="site-header">
-      <div class="logo-container">
-        <div class="logo-circle"><span>T</span></div>
+      <a class="logo-container" href="index.html" aria-label="Trove home">
+        <img src="assets/hero-logo.png" alt="Trove logo" class="logo-img" />
         <span class="logo-text">TROVE</span>
-      </div>
+      </a>
       <nav class="site-nav">
-        <a href="index.html#how">how</a>
-        <a href="index.html#assets">assets</a>
+        <a href="index.html">home</a>
+        <a href="how-it-works.html">how it works</a>
+        <a href="index.html#staking">assets</a>
         <a href="index.html#contact">contact</a>
         <a href="login.html" class="active-nav login-btn">log in</a>
       </nav>
     </header>
-
     <main>
       <section class="login-section">
         <h2>Log in to Trove</h2>
         <form id="loginForm">
           <input type="email" id="loginEmail" placeholder="Email" required />
           <input type="password" id="loginPassword" placeholder="Password" required />
-          <button type="submit" class="primary-btn" style="width: 100%; margin-top: 1rem;">Log In</button>
+          <button type="submit" class="primary-btn" style="width: 100%; margin-top: 1rem">
+            Log In
+          </button>
         </form>
-        <p style="margin-top: 1rem; font-size: 0.9rem;">Don't have an account? <a href="signup.html">Sign up</a></p>
-        <p id="loginError" class="error-message" style="margin-top: 0.5rem;"></p>
+        <p style="margin-top: 1rem; font-size: 0.9rem">
+          Don't have an account? <a href="signup.html">Sign up</a>
+        </p>
+        <p id="loginError" class="error-message" style="margin-top: 0.5rem"></p>
       </section>
     </main>
-
     <footer class="site-footer">
       <p>&copy; 2025 Trove. All rights reserved.</p>
     </footer>
-
     <script src="script.js"></script>
   </body>
 </html>

@@ -4,55 +4,87 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trove</title>
-    <!-- Use the same font and stylesheet as the previous design -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <!-- Google Fonts: Poppins for crisp typography -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Site styles -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Header with logo and navigation -->
+    <!-- Site header: logo links back home and nav items -->
     <header class="site-header">
-      <div class="logo-container">
-        <div class="logo-circle"><span>T</span></div>
+      <a class="logo-container" href="index.html" aria-label="Trove home">
+        <!-- The brand mark provided by the user lives in the assets folder. We use a class for sizing. -->
+        <img src="assets/hero-logo.png" alt="Trove logo" class="logo-img" />
         <span class="logo-text">TROVE</span>
-      </div>
+      </a>
       <nav class="site-nav">
-        <a href="#how">how</a>
-        <a href="#assets">assets</a>
+        <a href="index.html">home</a>
+        <a href="how-it-works.html">how it works</a>
+        <a href="#staking">assets</a>
         <a href="#contact">contact</a>
-        <a href="#" class="login-btn">log in</a>
+        <!-- Log in/out button updated dynamically via script.js -->
+        <a href="login.html" class="login-btn">log in</a>
       </nav>
     </header>
 
     <main>
-      <!-- Hero section -->
+      <!-- Hero section introducing the platform -->
       <section class="hero" id="home">
         <h1 class="hero-title">Rewarding long‑term investors</h1>
-        <p class="hero-subtitle">buy stocks, crypto, and more, with enhanced dividends and better yields than anywhere else</p>
+        <p class="hero-subtitle">
+          Buy stocks, crypto, and more, with enhanced dividends and better
+          yields than anywhere else
+        </p>
         <a href="signup.html" class="primary-btn">Join</a>
       </section>
 
-      <!-- Brief “How” section describing Trove’s philosophy -->
-      <section class="brief-how-section" id="how">
+      <!-- Brief How section summarising Trove's unique features -->
+      <section class="brief-how-section" id="brief-how">
         <h2 class="brief-how-title">How?</h2>
         <div class="how-cards">
           <div class="how-card">
             <h3>1. Rewarding Loyalty</h3>
-            <p>Why should short‑term traders be rewarded with dividends? We think they shouldn’t.</p>
-            <p>That’s why with Trove, all users only receive dividends from investments for positions they’ve held longer than 60 days. The dividends not sent to short‑term holders are shared instead with other members.</p>
-            <p>This provides a small boost to your investment yields. But there’s also more.</p>
+            <p>
+              Why should short‑term traders be rewarded with dividends? We
+              think they shouldn’t.
+            </p>
+            <p>
+              That’s why with Trove, all users only receive dividends from
+              investments for positions they’ve held longer than 60 days. The
+              dividends not sent to short‑term holders are shared instead
+              with other platform members.
+            </p>
+            <p>
+              This provides a small boost to your investment yields. But
+              there’s also more.
+            </p>
           </div>
           <div class="how-card">
             <h3>2. Trove Treasury Yields</h3>
-            <p>Trove is unique. As we grow together we want to reward you for your loyalty to us, not just your investments.</p>
-            <p>Half of the revenue Trove earns is placed into a crypto treasury. This serves us by maintaining high‑growth assets.</p>
-            <p>We then stake our treasury across multiple staking pools and the entire yield pool is split between our members.</p>
+            <p>
+              Trove is unique. As we grow together we want to reward you
+              for your loyalty to us, not just your investments.
+            </p>
+            <p>
+              Half of the revenue Trove earns is placed into a crypto
+              treasury. This serves us by maintaining high‑growth assets.
+            </p>
+            <p>
+              We then stake our treasury across multiple staking pools and
+              the entire yield pool is split between our members.
+            </p>
             <p>Simply, we generate revenue, invest ourselves and share the yield with you.</p>
           </div>
         </div>
-        <div class="learn-more-link"><a href="how-it-works.html">learn more →</a></div>
+        <div class="learn-more-link">
+          <a href="how-it-works.html">learn more →</a>
+        </div>
       </section>
 
-      <!-- Treasury pool section -->
+      <!-- Treasury Pool metrics -->
       <section class="treasury-pool" id="treasury">
         <h2 class="section-heading">Treasury Pool</h2>
         <div class="pool-cards">
@@ -75,32 +107,32 @@
         </div>
       </section>
 
-      <!-- Staking breakdown section -->
+      <!-- Staking breakdown section showing pool details -->
       <section class="staking-breakdown" id="staking">
         <h2 class="section-heading">Staking Breakdown</h2>
         <div class="stake-cards">
           <div class="stake-card">
-            <img src="bitcoin.png" alt="Bitcoin" />
+            <img src="assets/bitcoin.png" alt="Bitcoin" />
             <h3>BTC Growth Pool</h3>
             <p>total staked – $55,901</p>
             <p>yield – 5.2% APY</p>
           </div>
           <div class="stake-card">
-            <img src="ethereum.png" alt="Ethereum" />
+            <img src="assets/ethereum.png" alt="Ethereum" />
             <h3>ETH Stability Pool</h3>
             <p>total staked – $39,400</p>
-            <p>yield – 4.5% APY</p>
+            <p>yield – 4.5%</p>
           </div>
           <div class="stake-card">
-            <img src="usdc.png" alt="USDC" />
+            <img src="assets/usdc.png" alt="USDC" />
             <h3>USDC Treasury Pool</h3>
             <p>total staked – $22,842</p>
-            <p>yield – 6% APY</p>
+            <p>yield – 6%</p>
           </div>
         </div>
       </section>
 
-      <!-- User rewards section -->
+      <!-- User rewards section with stats and call to actions -->
       <section class="user-rewards" id="assets">
         <h2 class="section-heading">User Rewards</h2>
         <div class="rewards-content">
@@ -109,16 +141,22 @@
             <p>26,302 users have received staking rewards</p>
             <p>28,402 users have received enhanced dividends</p>
             <h3>new members</h3>
-            <p>1,028 new users have joined Trove in the last 30 days! Together we grow the pool</p>
+            <p>
+              1,028 new users have joined Trove in the last 30 days! Together
+              we grow the pool
+            </p>
             <h3>fee pool</h3>
-            <p>We’re always trying to find ways to build the treasure trove. We currently have 8 feeds into the pool</p>
+            <p>
+              We’re always trying to find ways to build the treasure trove.
+              We currently have 8 feeds into the pool
+            </p>
             <div class="rewards-actions">
               <a href="#" class="secondary-btn">refer a friend</a>
               <a href="#" class="secondary-btn">suggest more ideas!</a>
             </div>
           </div>
           <div class="rewards-image">
-            <img src="fruit-camera.png" alt="Fruit basket and camera" />
+            <img src="assets/fruit-camera.png" alt="Fruit basket and camera" />
           </div>
         </div>
       </section>
@@ -126,7 +164,10 @@
       <!-- Contact section -->
       <section class="contact-section" id="contact">
         <h2 class="section-heading">Contact</h2>
-        <p>If you’d like to get in touch, please email us at <a href="mailto:hello@trove.com">hello@trove.com</a>.</p>
+        <p>
+          If you’d like to get in touch, please email us at
+          <a href="mailto:hello@trove.com">hello@trove.com</a>.
+        </p>
       </section>
     </main>
 

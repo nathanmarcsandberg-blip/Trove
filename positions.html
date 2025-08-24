@@ -1,78 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trove – Your Positions</title>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- Main stylesheet with version query to bust cache -->
-  <link rel="stylesheet" href="style.css?v=2">
-</head>
-<body>
-  <!-- Header replicated from index with positions link and account button -->
-  <header class="main-header">
-    <div class="logo">
-      <!-- Use provided logo for header -->
-      <div class="logo-icon-img">
-        <img src="assets/logo512.png" alt="Trove logo" class="logo-img">
-      </div>
-      <span class="logo-text">Trove</span>
-    </div>
-    <nav class="top-nav">
-      <ul>
-        <li><a href="index.html#home">Home</a></li>
-        <li><a href="index.html#what">What</a></li>
-        <li><a href="index.html#how">How</a></li>
-        <li><a href="index.html#treasury">Treasury</a></li>
-        <li><a href="index.html#join">Join</a></li>
-        <li><a href="positions.html">Positions</a></li>
-      </ul>
-    </nav>
-    <a href="#" class="account-btn">Account</a>
-  </header>
-  <!-- Page container with dotted background for positions page -->
-  <div class="page-container">
-    <!-- Positions Section -->
-    <section class="positions-section">
-      <h2 class="positions-title">Your Positions</h2>
-      <p class="positions-categories">Dividend Stocks&nbsp;–&nbsp;Non‑Dividend Stocks&nbsp;–&nbsp;Crypto&nbsp;–&nbsp;Commodities</p>
-      <div class="position-card">
-        <div class="position-left">
-          <div class="position-logo">Coca‑Cola</div>
-          <div class="position-return">
-            <div class="dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="return-value"><span id="return-percent">+2.32%</span> <span class="return-period">(24h)</span></div>
-          </div>
-        </div>
-        <div class="position-right">
-          <div class="progress-heading">Your Progress</div>
-          <div class="progress-bar">
-            <div class="progress-line"></div>
-            <div class="progress-marker start"></div>
-            <div class="progress-marker current"></div>
-            <div class="progress-marker end"></div>
-          </div>
-          <div class="progress-labels">
-            <span class="label-start">You're Here</span>
-            <span class="label-end">63&nbsp;Days until Rewards Unlock</span>
-          </div>
-        </div>
-        <div class="position-actions">
-          <button class="btn btn-grey" disabled>Sell Now</button>
-          <button class="btn btn-red" disabled>Unstake</button>
-          <button class="btn btn-green" disabled>Stake More</button>
-          <button class="btn btn-blue" disabled>Buy More</button>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Positions – Trove</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Shared header with home link and nav items -->
+    <header class="site-header">
+      <a class="logo-container" href="index.html" aria-label="Trove home">
+        <img src="assets/hero-logo.png" alt="Trove logo" class="logo-img" />
+        <span class="logo-text">TROVE</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html">home</a>
+        <a href="how-it-works.html">how it works</a>
+        <a href="index.html#staking">assets</a>
+        <a href="index.html#contact">contact</a>
+        <a href="login.html" class="login-btn">log in</a>
+      </nav>
+    </header>
+    <main>
+      <section class="how-section">
+        <h2 class="section-heading">Your Positions</h2>
+        <p style="max-width: 700px; margin: 0 auto; text-align: center;">
+          This section will display your current holdings and progress towards
+          dividend maturity. Check back soon for updates!
+        </p>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <p>&copy; 2025 Trove. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
 </html>

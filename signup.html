@@ -4,25 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up – Trove</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- Reusable header with logo link and navigation -->
     <header class="site-header">
-      <div class="logo-container">
-        <div class="logo-circle"><span>T</span></div>
+      <a class="logo-container" href="index.html" aria-label="Trove home">
+        <img src="assets/hero-logo.png" alt="Trove logo" class="logo-img" />
         <span class="logo-text">TROVE</span>
-      </div>
+      </a>
       <nav class="site-nav">
-        <a href="index.html#how">how</a>
-        <a href="index.html#assets">assets</a>
+        <a href="index.html">home</a>
+        <a href="how-it-works.html">how it works</a>
+        <a href="index.html#staking">assets</a>
         <a href="index.html#contact">contact</a>
-        <a href="index.html" class="login-btn">log in</a>
+        <a href="login.html" class="login-btn">log in</a>
       </nav>
     </header>
     <main>
+      <!-- Multi‑step signup form -->
       <div class="signup-wrapper">
-        <!-- Step 1 -->
+        <!-- Step 1: basic details -->
         <div class="step step-1 active">
           <h2>welcome to trove</h2>
           <div class="form-group">
@@ -38,14 +44,19 @@
             <button type="button" class="next-btn">Next</button>
           </div>
         </div>
-        <!-- Step 2 -->
+        <!-- Step 2: account credentials -->
         <div class="step step-2">
           <h2>welcome to trove</h2>
           <div class="form-group">
             <input type="password" id="password" placeholder="Create password" required />
           </div>
           <div class="form-group">
-            <input type="password" id="confirmPassword" placeholder="Confirm password" required />
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm password"
+              required
+            />
           </div>
           <div class="form-group">
             <input type="email" id="email" placeholder="Email" required />
@@ -55,7 +66,7 @@
             <button type="button" class="next-btn">Next</button>
           </div>
         </div>
-        <!-- Step 3 -->
+        <!-- Step 3: contact details -->
         <div class="step step-3">
           <h2>welcome to trove</h2>
           <div class="form-group">
@@ -72,7 +83,7 @@
             <button type="button" class="next-btn">Next</button>
           </div>
         </div>
-        <!-- Step 4 -->
+        <!-- Step 4: preferences -->
         <div class="step step-4">
           <h2>welcome to trove</h2>
           <div class="form-group">
@@ -102,30 +113,37 @@
             <button type="button" class="next-btn">Next</button>
           </div>
         </div>
-        <!-- Step 5 -->
+        <!-- Step 5: optional pet adoption -->
         <div class="step step-5">
           <h2>welcome to trove</h2>
-          <p style="margin-bottom: 1rem; font-weight: 600;">adopt a pet! completely optional. completely worthwhile</p>
-          <p style="margin-top: -0.5rem; font-size: 0.85rem; color: var(--color-grey);">look after your pet to earn extra benefits on trove such as shorter unlock periods, entries into cash raffles, and more</p>
+          <p style="margin-bottom: 1rem; font-weight: 600">
+            adopt a pet! completely optional. completely worthwhile
+          </p>
+          <p style="margin-top: -0.5rem; font-size: 0.85rem; color: var(--color-grey)">
+            look after your pet to earn extra benefits on trove such as shorter unlock periods,
+            entries into cash raffles, and more
+          </p>
           <div class="pet-options">
             <div class="pet-card" data-pet="Dog">
-              <img src="dog.png" alt="Dog" />
+              <img src="assets/dog.png" alt="Dog" />
               <div>Dog</div>
             </div>
             <div class="pet-card" data-pet="Cat">
-              <img src="cat.png" alt="Cat" />
+              <img src="assets/cat.png" alt="Cat" />
               <div>Cat</div>
             </div>
             <div class="pet-card" data-pet="Fish">
-              <img src="fish.png" alt="Fish" />
+              <img src="assets/fish.png" alt="Fish" />
               <div>Fish</div>
             </div>
             <div class="pet-card" data-pet="Dragon">
-              <img src="dragon.png" alt="Dragon" />
+              <img src="assets/dragon.png" alt="Dragon" />
               <div>Dragon</div>
             </div>
             <div class="pet-card" data-pet="Custom">
-              <div style="font-size: 0.95rem; margin-top: 1.25rem;">Custom<br />Request</div>
+              <div style="font-size: 0.95rem; margin-top: 1.25rem">
+                Custom<br />Request
+              </div>
             </div>
           </div>
           <div class="action-buttons">
@@ -134,7 +152,7 @@
           </div>
         </div>
         <!-- Decorative treasure chest -->
-        <img class="treasure-img" src="treasure-chest.png" alt="Treasure chest" />
+        <img class="treasure-img" src="assets/treasure-chest.png" alt="Treasure chest" />
       </div>
     </main>
     <script src="script.js"></script>
