@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Positions – Trove</title>
+    <title>Assets – Trove</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Shared header with home link and nav items -->
     <header class="site-header">
       <a class="logo-container" href="index.html" aria-label="Trove home">
         <img src="hero-logo.png" alt="Trove logo" class="logo-img" />
@@ -20,22 +19,20 @@
       <nav class="site-nav">
         <a href="index.html">home</a>
         <a href="how-it-works.html">how it works</a>
-        <a href="assets.html">assets</a>
+        <a href="assets.html" class="active-nav">assets</a>
         <a href="index.html#contact">contact</a>
         <a href="login.html" class="login-btn">log in</a>
       </nav>
     </header>
     <main>
       <section class="how-section">
-        <h2 class="section-heading">Your Positions</h2>
-        <!-- Display current user balance if logged in -->
-        <p id="balanceDisplay" style="text-align:center; font-weight:600; margin-bottom:1rem;"></p>
-        <!-- Categories row matching figma (dividend, non-dividend, crypto, commodities) -->
-        <p class="positions-categories" style="text-align:center; font-size:1rem; margin-bottom:1.5rem; text-decoration: underline;">
-          Dividend Stocks – Non-Dividend Stocks – Crypto – Commodities
+        <h2 class="section-heading">Available Assets</h2>
+        <p style="max-width: 800px; margin: 0 auto; text-align: center">
+          Browse the assets available on Trove. If you’re logged in, you can buy,
+          sell, stake or unstake directly from this page. Otherwise, the table is
+          read‑only.
         </p>
-        <!-- Container where positions will be rendered dynamically -->
-        <div id="positionsContainer"></div>
+        <div id="assetsTable" style="margin-top: 2rem; overflow-x: auto"></div>
       </section>
     </main>
     <footer class="site-footer">

@@ -16,14 +16,15 @@
     <!-- Site header: logo links back home and nav items -->
     <header class="site-header">
       <a class="logo-container" href="index.html" aria-label="Trove home">
-        <!-- The brand mark provided by the user lives in the assets folder. We use a class for sizing. -->
-        <img src="assets/hero-logo.png" alt="Trove logo" class="logo-img" />
+        <!-- Use the root-level logo image so it loads correctly when extracted -->
+        <img src="hero-logo.png" alt="Trove logo" class="logo-img" />
         <span class="logo-text">TROVE</span>
       </a>
       <nav class="site-nav">
         <a href="index.html">home</a>
         <a href="how-it-works.html">how it works</a>
-        <a href="#staking">assets</a>
+        <!-- Link to the dedicated assets page -->
+        <a href="assets.html">assets</a>
         <a href="#contact">contact</a>
         <!-- Log in/out button updated dynamically via script.js -->
         <a href="login.html" class="login-btn">log in</a>
@@ -112,19 +113,19 @@
         <h2 class="section-heading">Staking Breakdown</h2>
         <div class="stake-cards">
           <div class="stake-card">
-            <img src="assets/bitcoin.png" alt="Bitcoin" />
+            <img src="bitcoin.png" alt="Bitcoin" />
             <h3>BTC Growth Pool</h3>
             <p>total staked – $55,901</p>
             <p>yield – 5.2% APY</p>
           </div>
           <div class="stake-card">
-            <img src="assets/ethereum.png" alt="Ethereum" />
+            <img src="ethereum.png" alt="Ethereum" />
             <h3>ETH Stability Pool</h3>
             <p>total staked – $39,400</p>
             <p>yield – 4.5%</p>
           </div>
           <div class="stake-card">
-            <img src="assets/usdc.png" alt="USDC" />
+            <img src="usdc.png" alt="USDC" />
             <h3>USDC Treasury Pool</h3>
             <p>total staked – $22,842</p>
             <p>yield – 6%</p>
@@ -156,7 +157,7 @@
             </div>
           </div>
           <div class="rewards-image">
-            <img src="assets/fruit-camera.png" alt="Fruit basket and camera" />
+            <img src="fruit-camera.png" alt="Fruit basket and camera" />
           </div>
         </div>
       </section>

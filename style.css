@@ -18,6 +18,14 @@
   --color-grey: #666666;
 }
 
+/* Styles for positions page categories row */
+.positions-categories {
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: underline;
+}
 html,
 body {
   margin: 0;
