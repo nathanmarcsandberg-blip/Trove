@@ -439,41 +439,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const signupWrapper = document.querySelector('.signup-wrapper');
   if (signupWrapper) {
     const steps = Array.from(signupWrapper.querySelectorAll('.step'));
-    let currentStep = steps.findIndex((s) => s.classList.contains('active'));
-    if (currentStep < 0) currentStep = 0;
+    let currentStep = 0;
     const formData = {};
-
+    // helper to show only the current step
     const showStep = (i) => {
-      steps.forEach((step, idx) => step.classList.toggle('active', idx === i));
+      steps.forEach((step, idx) => {
+        if (idx === i) {
+          step.classList.add('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
     };
     showStep(currentStep);
 
     signupWrapper.addEventListener('click', (e) => {
-      // Next button logic
-      if (e.target.matches('.next-btn')) {
+      // handle next (including final finish) using closest to capture clicks on children
+      const nextBtn = e.target.closest('.next-btn');
+      const backBtn = e.target.closest('.back-btn');
+      const petCard = e.target.closest('.pet-card');
+      if (petCard) {
+        signupWrapper.querySelectorAll('.pet-card').forEach((c) => c.classList.remove('selected'));
+        petCard.classList.add('selected');
+        formData.pet = petCard.dataset.pet;
+      }
+      if (backBtn) {
+        e.preventDefault();
+        if (currentStep > 0) {
+          currentStep -= 1;
+          showStep(currentStep);
+        }
+        return;
+      }
+      if (nextBtn) {
+        e.preventDefault();
+        // capture inputs in current step
         const active = steps[currentStep];
-        // capture all inputs/selects in current step
         const inputs = active.querySelectorAll('input, select');
         inputs.forEach((input) => {
           const key = input.id || input.name || input.placeholder;
-          if (input.type === 'checkbox') {
-            formData[key] = input.checked;
-          } else {
-            formData[key] = input.value;
-          }
+          formData[key] = input.type === 'checkbox' ? input.checked : input.value;
         });
+        // move to next step or finish
         if (currentStep < steps.length - 1) {
           currentStep += 1;
           showStep(currentStep);
         } else {
-          // Final step – register user
+          // final step: create account
           const email = (formData.email || formData.Email || '').trim().toLowerCase();
           const password = (formData.password || formData['Create password'] || formData['create password'] || '').toString();
           if (!email || !password) {
             alert('Please provide a valid email and password to sign up.');
             return;
           }
-          // Merge into existing users
           const users = getUsers();
           users[email] = {
             email,
@@ -488,13 +506,11 @@ document.addEventListener('DOMContentLoaded', () => {
             theme: formData.theme || '',
             twofa: !!formData.twofa,
             pet: formData.pet || '',
-            // initialise fake currency and empty portfolio
             balance: 100000,
             portfolio: {}
           };
           saveUsers(users);
           setCurrent(email);
-          // Show success message
           signupWrapper.innerHTML = `
             <h2>Welcome to Trove!</h2>
             <p>Thanks for signing up, ${formData.firstName || 'friend'}.</p>
@@ -505,20 +521,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
         }
-      }
-      // Back button logic
-      if (e.target.matches('.back-btn')) {
-          if (currentStep > 0) {
-            currentStep -= 1;
-            showStep(currentStep);
-          }
-      }
-      // Pet card selection
-      const petCard = e.target.closest('.pet-card');
-      if (petCard) {
-        signupWrapper.querySelectorAll('.pet-card').forEach((c) => c.classList.remove('selected'));
-        petCard.classList.add('selected');
-        formData.pet = petCard.dataset.pet;
       }
     });
   }
