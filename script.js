@@ -153,7 +153,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const u = users[current];
       // ensure default balance and portfolio for new or CSV users
       if (typeof u.balance !== 'number') u.balance = 100000;
-      if (!u.portfolio) u.portfolio = {};
+      // Ensure positions array exists (replace legacy portfolio)
+      if (!Array.isArray(u.positions)) {
+        // migrate legacy portfolio object if present
+        if (u.portfolio && typeof u.portfolio === 'object') {
+          u.positions = Object.keys(u.portfolio).map((k) => {
+            const v = u.portfolio[k];
+            return {
+              id: Date.now() + Math.random(),
+              name: k,
+              quantity: v.quantity || 0,
+              purchasePrice: ASSET_LIST.find((a) => a.name === k)?.price || 0,
+              purchaseDate: v.purchaseDate || Date.now()
+            };
+          });
+          delete u.portfolio;
+        } else {
+          u.positions = [];
+        }
+      }
       return u;
     }
     return null;
@@ -176,8 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     html += '<tbody>';
     ASSET_LIST.forEach((asset) => {
       const key = asset.name;
-      const userHoldings = user?.portfolio?.[key] || null;
-      const canStake = asset.class === 'dividend_paying_stock';
+      const userHoldings = user?.positions?.filter((p) => p.name === key) || [];
       html += '<tr style="border-top: 1px solid #eee;">';
       html += `<td style="padding:0.5rem 0.75rem;">${asset.name}</td>`;
       // replace underscores with spaces and capitalise first letter of each word
@@ -189,19 +206,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!user) {
         html += '<span style="color: #888; font-size:0.85rem;">Log in to trade</span>';
       } else {
-        if (!userHoldings || userHoldings.quantity === 0) {
-          html += `<button class="asset-action" data-action="buy" data-name="${key}" data-price="${asset.price}">Buy</button>`;
+        if (userHoldings.length === 0) {
+          // user does not own any of this asset
+          html += `<button class="asset-action buy" data-action="buy" data-name="${key}" data-price="${asset.price}">Buy</button>`;
         } else {
-          html += `<button class="asset-action" data-action="sell" data-name="${key}" data-price="${asset.price}">Sell</button>`;
-          if (canStake) {
-            if (userHoldings.staked) {
-              html += `<button class="asset-action" data-action="unstake" data-name="${key}">Unstake</button>`;
-            } else {
-              html += `<button class="asset-action" data-action="stake" data-name="${key}">Stake</button>`;
-            }
-          }
-          // Always allow additional purchase
-          html += `<button class="asset-action" data-action="buy" data-name="${key}" data-price="${asset.price}">Buy More</button>`;
+          // user owns at least one position; allow sell and buy more
+          html += `<button class="asset-action sell" data-action="sell" data-name="${key}" data-price="${asset.price}">Sell</button>`;
+          html += `<button class="asset-action buy" data-action="buy" data-name="${key}" data-price="${asset.price}">Buy More</button>`;
         }
       }
       html += '</td></tr>';
@@ -224,43 +235,57 @@ document.addEventListener('DOMContentLoaded', () => {
     if (balanceEl) {
       balanceEl.textContent = `Available balance: $${user.balance.toFixed(2)}`;
     }
-    const portfolio = user.portfolio || {};
-    const keys = Object.keys(portfolio).filter((k) => portfolio[k].quantity > 0);
-    if (keys.length === 0) {
+    // Use positions array instead of legacy portfolio
+    const positions = Array.isArray(user.positions) ? user.positions.filter((p) => p.quantity > 0) : [];
+    if (positions.length === 0) {
       container.innerHTML = '<p style="text-align:center;">You don\'t have any positions yet. Visit the <a href="assets.html">Assets</a> page to start investing.</p>';
       return;
     }
     let html = '';
-    keys.forEach((name) => {
-      const holding = portfolio[name];
+    positions.forEach((pos) => {
+      const name = pos.name;
+      const quantity = pos.quantity;
+      const price = pos.purchasePrice;
+      const total = price * quantity;
       const assetInfo = ASSET_LIST.find((a) => a.name === name);
-      const purchaseDate = new Date(holding.purchaseDate);
-      const now = new Date();
-      const daysHeld = Math.floor((now - purchaseDate) / (1000 * 60 * 60 * 24));
-      const maturity = 60;
-      const progress = Math.min(1, daysHeld / maturity);
+      // Simulate 24h return randomly between -3 and +3 percent
       const returnPerc = (Math.random() * 6 - 3).toFixed(2);
       const returnColor = returnPerc >= 0 ? '#009900' : '#cc0000';
-      // Determine progress circles: start is always red, middle is yellow until matured, end is green when mature else grey
+      // Progress calculation based on 2 minute maturity
+      const now = Date.now();
+      const maturityMs = 2 * 60 * 1000;
+      const elapsed = now - pos.purchaseDate;
+      const progress = Math.min(1, elapsed / maturityMs);
+      const remainingMs = Math.max(0, maturityMs - elapsed);
+      const remainingSec = Math.ceil(remainingMs / 1000);
       const midClass = progress >= 1 ? 'complete' : 'current';
       const endClass = progress >= 1 ? 'complete' : '';
+      // Format remaining time as seconds or matured message
+      const timeLabel = progress >= 1 ? 'Rewards unlocked' : `${remainingSec} sec until rewards unlock`;
       html += `<div class="position-card">
-        <div class="card-top">
-          <h3 class="asset-name">${name}</h3>
-          <div class="return-24h" style="color:${returnColor};">${returnPerc}% <span style="font-size:0.85rem; color:#666;">(24h)</span></div>
-        </div>
-        <p>Quantity: ${holding.quantity}</p>
-        <div class="progress-row">
-          <div class="progress-circle start"></div>
-          <div class="progress-bar" style="--progress-width:${(progress * 100).toFixed(0)}%"></div>
-          <div class="progress-circle ${midClass}"></div>
-          <div class="progress-circle ${endClass}"></div>
-          <span style="font-size:0.8rem; margin-left:0.5rem; color:#666;">${Math.max(0, maturity - daysHeld)} days until rewards unlock</span>
+        <div class="card-main">
+          <div class="card-left">
+            <div>Price: $${price.toFixed(2)}</div>
+            <div>Units: ${quantity}</div>
+            <div>Total: $${total.toFixed(2)}</div>
+          </div>
+          <div class="card-right">
+            <div class="card-top">
+              <h3 class="asset-name">${name}</h3>
+              <div class="return-24h" style="color:${returnColor};">${returnPerc}% <span style="font-size:0.85rem; color:#666;">(24h)</span></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-circle start"></div>
+              <div class="progress-bar" style="--progress-width:${(progress * 100).toFixed(0)}%"></div>
+              <div class="progress-circle ${midClass}"></div>
+              <div class="progress-circle ${endClass}"></div>
+              <span style="font-size:0.8rem; margin-left:0.5rem; color:#666;">${timeLabel}</span>
+            </div>
+          </div>
         </div>
         <div class="position-actions">
-          <button class="position-action sell" data-action="sell" data-name="${name}" data-price="${assetInfo?.price || 0}">Sell</button>
-          ${assetInfo && assetInfo.class === 'dividend_paying_stock' ? (holding.staked ? `<button class="position-action unstake" data-action="unstake" data-name="${name}">Unstake</button>` : `<button class="position-action stake" data-action="stake" data-name="${name}">Stake</button>`) : ''}
-          <button class="position-action buy-more" data-action="buy" data-name="${name}" data-price="${assetInfo?.price || 0}">Buy More</button>
+          <button class="position-action sell" data-action="sell" data-name="${name}" data-price="${price}" data-id="${pos.id}">Sell</button>
+          <button class="position-action buy-more" data-action="buy" data-name="${name}" data-price="${assetInfo?.price || price}">Buy More</button>
         </div>
       </div>`;
     });
@@ -291,12 +316,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
           user.balance -= cost;
-          if (!user.portfolio) user.portfolio = {};
-          if (!user.portfolio[name]) {
-            user.portfolio[name] = { quantity: 0, staked: false, purchaseDate: Date.now() };
-          }
-          user.portfolio[name].quantity += quantity;
-          user.portfolio[name].purchaseDate = Date.now();
+          if (!Array.isArray(user.positions)) user.positions = [];
+          user.positions.push({
+            id: Date.now() + Math.random(),
+            name,
+            quantity,
+            purchasePrice: price,
+            purchaseDate: Date.now()
+          });
           saveCurrentUser(user);
           alert(`Successfully purchased ${quantity} of ${name}.`);
           renderAssetsTable();
@@ -304,50 +331,37 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
         }
         case 'sell': {
-          const holding = user.portfolio && user.portfolio[name];
-          if (!holding || holding.quantity <= 0) {
+          // Sell across all positions of this asset
+          const positions = (user.positions || []).filter((p) => p.name === name);
+          if (!positions.length) {
             alert('You do not own any of this asset.');
             return;
           }
-          const quantityStr = prompt(`You own ${holding.quantity} of ${name}. How many would you like to sell?`);
-          const quantity = parseFloat(quantityStr);
-          if (!quantity || quantity <= 0) return;
-          if (quantity > holding.quantity) {
+          const totalQty = positions.reduce((sum, p) => sum + p.quantity, 0);
+          const quantityStr = prompt(`You own ${totalQty} of ${name}. How many would you like to sell?`);
+          const sellQty = parseFloat(quantityStr);
+          if (!sellQty || sellQty <= 0) return;
+          if (sellQty > totalQty) {
             alert('You do not own that many units.');
             return;
           }
-          const revenue = price * quantity;
+          let remaining = sellQty;
+          let revenue = 0;
+          // iterate through positions (FIFO) and reduce quantities
+          for (const pos of user.positions) {
+            if (pos.name !== name || remaining <= 0) continue;
+            const qtyToSell = Math.min(pos.quantity, remaining);
+            revenue += qtyToSell * pos.purchasePrice;
+            pos.quantity -= qtyToSell;
+            remaining -= qtyToSell;
+          }
+          // remove positions with zero quantity
+          user.positions = user.positions.filter((p) => p.quantity > 0);
           user.balance += revenue;
-          holding.quantity -= quantity;
-          if (holding.quantity === 0) {
-            delete user.portfolio[name];
-          }
           saveCurrentUser(user);
-          alert(`Sold ${quantity} of ${name} for $${revenue.toFixed(2)}.`);
+          alert(`Sold ${sellQty} of ${name} for $${revenue.toFixed(2)}.`);
           renderAssetsTable();
           renderPositions();
-          break;
-        }
-        case 'stake': {
-          const holding = user.portfolio && user.portfolio[name];
-          if (!holding || holding.quantity <= 0) {
-            alert('You do not own any of this asset.');
-            return;
-          }
-          holding.staked = true;
-          saveCurrentUser(user);
-          renderAssetsTable();
-          renderPositions();
-          break;
-        }
-        case 'unstake': {
-          const holding = user.portfolio && user.portfolio[name];
-          if (holding) {
-            holding.staked = false;
-            saveCurrentUser(user);
-            renderAssetsTable();
-            renderPositions();
-          }
           break;
         }
         default:
@@ -366,9 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Please log in.');
         return;
       }
-      // mimic the same actions as assets table
       switch (action) {
         case 'buy': {
+          // Buy more of this asset (creates new position)
           const quantityStr = prompt(`How many of ${name} would you like to buy?`);
           const quantity = parseFloat(quantityStr);
           if (!quantity || quantity <= 0) return;
@@ -378,59 +392,78 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
           user.balance -= cost;
-          if (!user.portfolio) user.portfolio = {};
-          if (!user.portfolio[name]) {
-            user.portfolio[name] = { quantity: 0, staked: false, purchaseDate: Date.now() };
-          }
-          user.portfolio[name].quantity += quantity;
-          user.portfolio[name].purchaseDate = Date.now();
+          if (!Array.isArray(user.positions)) user.positions = [];
+          user.positions.push({
+            id: Date.now() + Math.random(),
+            name,
+            quantity,
+            purchasePrice: price,
+            purchaseDate: Date.now()
+          });
           saveCurrentUser(user);
           renderAssetsTable();
           renderPositions();
           break;
         }
         case 'sell': {
-          const holding = user.portfolio && user.portfolio[name];
-          if (!holding || holding.quantity <= 0) {
+          // Sell from a specific position if id is provided
+          const posId = posBtn.getAttribute('data-id');
+          if (posId) {
+            const position = (user.positions || []).find((p) => String(p.id) === String(posId));
+            if (!position) {
+              alert('Position not found.');
+              return;
+            }
+            const quantityStr = prompt(`You own ${position.quantity} of this position in ${position.name}. How many would you like to sell?`);
+            const sellQty = parseFloat(quantityStr);
+            if (!sellQty || sellQty <= 0) return;
+            if (sellQty > position.quantity) {
+              alert('You do not own that many units in this position.');
+              return;
+            }
+            const revenue = sellQty * position.purchasePrice;
+            user.balance += revenue;
+            position.quantity -= sellQty;
+            if (position.quantity === 0) {
+              user.positions = user.positions.filter((p) => String(p.id) !== String(posId));
+            }
+            saveCurrentUser(user);
+            renderAssetsTable();
+            renderPositions();
+            break;
+          }
+          // if no id, fallback to aggregated sale across positions
+          const positions = (user.positions || []).filter((p) => p.name === name);
+          if (!positions.length) {
             alert('You do not own any of this asset.');
             return;
           }
-          const quantityStr = prompt(`You own ${holding.quantity} of ${name}. How many would you like to sell?`);
-          const quantity = parseFloat(quantityStr);
-          if (!quantity || quantity <= 0) return;
-          if (quantity > holding.quantity) {
+          const totalQty = positions.reduce((sum, p) => sum + p.quantity, 0);
+          const quantityStr = prompt(`You own ${totalQty} of ${name}. How many would you like to sell?`);
+          const sellQty = parseFloat(quantityStr);
+          if (!sellQty || sellQty <= 0) return;
+          if (sellQty > totalQty) {
             alert('You do not own that many units.');
             return;
           }
-          const revenue = price * quantity;
-          user.balance += revenue;
-          holding.quantity -= quantity;
-          if (holding.quantity === 0) {
-            delete user.portfolio[name];
+          let remaining = sellQty;
+          let revenue = 0;
+          for (const pos of user.positions) {
+            if (pos.name !== name || remaining <= 0) continue;
+            const qtyToSell = Math.min(pos.quantity, remaining);
+            revenue += qtyToSell * pos.purchasePrice;
+            pos.quantity -= qtyToSell;
+            remaining -= qtyToSell;
           }
+          user.positions = user.positions.filter((p) => p.quantity > 0);
+          user.balance += revenue;
           saveCurrentUser(user);
           renderAssetsTable();
           renderPositions();
           break;
         }
-        case 'stake': {
-          const holding = user.portfolio && user.portfolio[name];
-          if (!holding || holding.quantity <= 0) return;
-          holding.staked = true;
-          saveCurrentUser(user);
-          renderAssetsTable();
-          renderPositions();
+        default:
           break;
-        }
-        case 'unstake': {
-          const holding = user.portfolio && user.portfolio[name];
-          if (!holding) return;
-          holding.staked = false;
-          saveCurrentUser(user);
-          renderAssetsTable();
-          renderPositions();
-          break;
-        }
       }
     }
   });
@@ -438,6 +471,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Render assets table or positions page if present ----------
   renderAssetsTable();
   renderPositions();
+
+  // Update positions progress every second (for 2 minute maturity).
+  setInterval(() => {
+    renderPositions();
+  }, 1000);
 
   // ---------- Sign‑up logic (multi‑step form) ----------
   const signupWrapper = document.querySelector('.signup-wrapper');
@@ -511,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
             twofa: !!formData.twofa,
             pet: formData.pet || '',
             balance: 100000,
-            portfolio: {}
+            positions: []
           };
           saveUsers(users);
           setCurrent(email);
@@ -598,9 +636,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // success
-      // ensure default balance and portfolio if missing
+      // ensure default balance and positions array (migrating legacy portfolio)
       if (typeof user.balance !== 'number') user.balance = 100000;
-      if (!user.portfolio) user.portfolio = {};
+      if (!Array.isArray(user.positions)) {
+        // migrate legacy portfolio object if it exists
+        if (user.portfolio && typeof user.portfolio === 'object') {
+          user.positions = Object.keys(user.portfolio).map((k) => {
+            const v = user.portfolio[k];
+            return {
+              id: Date.now() + Math.random(),
+              name: k,
+              quantity: v.quantity || 0,
+              purchasePrice: ASSET_LIST.find((a) => a.name === k)?.price || 0,
+              purchaseDate: v.purchaseDate || Date.now()
+            };
+          });
+          delete user.portfolio;
+        } else {
+          user.positions = [];
+        }
+      }
       // persist user if loaded from CSV
       const allUsers = getUsers();
       allUsers[email] = user;

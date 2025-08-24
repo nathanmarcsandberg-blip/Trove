@@ -779,6 +779,30 @@ a {
   background: #cc0000;
 }
 
+/* New layout for position cards with left (price/units/total) and right (progress) */
+.position-card .card-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.position-card .card-left {
+  flex: 1 1 30%;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.position-card .card-right {
+  flex: 1 1 65%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .position-actions {
   display: flex;
   gap: 0.5rem;
