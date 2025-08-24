@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account – Trove</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header with nav including account -->
+    <header class="site-header">
+      <a class="logo-container" href="index.html" aria-label="Trove home">
+        <img src="logo512.png" alt="Trove logo" class="logo-img" />
+        <span class="logo-text">TROVE</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html">home</a>
+        <a href="how-it-works.html">how it works</a>
+        <a href="assets.html">assets</a>
+        <a href="index.html#contact">contact</a>
+        <a href="account.html" class="active-nav account-link">account</a>
+        <a href="login.html" class="login-btn">log in</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="account-section">
+        <h2 class="section-heading">Your Account</h2>
+        <div class="account-container">
+          <!-- Sidebar with profile and navigation -->
+          <div class="account-sidebar">
+            <div class="profile-box">
+              <div class="profile-picture" id="profilePicture">
+                <!-- Placeholder circle; could be replaced with actual uploaded image later -->
+              </div>
+              <button type="button" class="edit-picture-btn">edit picture</button>
+            </div>
+            <div class="sidebar-buttons">
+              <a href="#" class="account-side-btn edit-account-btn">edit account</a>
+              <a href="positions.html" class="account-side-btn">my portfolio</a>
+              <a href="assets.html" class="account-side-btn">buy more</a>
+            </div>
+          </div>
+          <!-- Main area with chart and account stats -->
+          <div class="account-main">
+            <div class="account-chart-box">
+              <div class="account-value" id="accountValue">$0.00</div>
+              <div class="chart-range-select" id="chartRange">
+                <span data-range="1w" class="active">1w</span> |
+                <span data-range="1m">1m</span> |
+                <span data-range="3m">3m</span> |
+                <span data-range="12m">12m</span>
+              </div>
+              <div class="chart-placeholder" id="accountChart">
+                <!-- Simple placeholder line chart generated via JS -->
+              </div>
+            </div>
+            <div class="account-stats">
+              <div class="stat-item">
+                <span class="stat-label">Dividends Earned</span>
+                <span class="stat-value" id="dividendsEarned">$0.00</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Extra Dividends</span>
+                <span class="stat-value" id="extraDividends">$0.00</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Trove Treasury Yields</span>
+                <span class="stat-value" id="treasuryYields">$0.00</span>
+              </div>
+              <div class="stat-item total-item">
+                <span class="stat-label">Total</span>
+                <span class="stat-value" id="totalReturns">$0.00</span>
+              </div>
+            </div>
+            <div class="account-actions">
+              <button type="button" class="deposit-btn">deposit funds</button>
+              <button type="button" class="cashout-btn">cash out</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <p>&copy; 2025 Trove. All rights reserved.</p>
+    </footer>
+
+    <!-- Portfolio sticky bar -->
+    <div id="portfolioBar" class="portfolio-bar" style="display:none;"></div>
+    <script src="script.js"></script>
+  </body>
+</html>

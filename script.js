@@ -119,6 +119,114 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.paddingBottom = '80px';
   }
 
+  // ---------- Account page rendering and actions ----------
+  function renderAccount() {
+    const valueEl = document.getElementById('accountValue');
+    if (!valueEl) return; // not on account page
+    const user = getCurrentUser();
+    const chartContainer = document.getElementById('accountChart');
+    const dividendsEl = document.getElementById('dividendsEarned');
+    const extraEl = document.getElementById('extraDividends');
+    const treasuryEl = document.getElementById('treasuryYields');
+    const totalEl = document.getElementById('totalReturns');
+    if (!user) {
+      // user not logged in, show message
+      if (chartContainer) chartContainer.textContent = 'Please log in to view account details.';
+      if (valueEl) valueEl.textContent = '$0.00';
+      if (dividendsEl) dividendsEl.textContent = '$0.00';
+      if (extraEl) extraEl.textContent = '$0.00';
+      if (treasuryEl) treasuryEl.textContent = '$0.00';
+      if (totalEl) totalEl.textContent = '$0.00';
+      return;
+    }
+    // compute total current portfolio value
+    let totalValue = 0;
+    if (Array.isArray(user.positions)) {
+      user.positions.forEach((pos) => {
+        const asset = ASSET_LIST.find((a) => a.name === pos.name);
+        const price = asset ? asset.price : pos.purchasePrice;
+        totalValue += pos.quantity * price;
+      });
+    }
+    valueEl.textContent = `$${totalValue.toFixed(2)}`;
+    // compute placeholder returns: dividends (0.8%), extra (0.3%), treasury (0.5%)
+    const dividends = totalValue * 0.008;
+    const extra = totalValue * 0.003;
+    const treasury = totalValue * 0.005;
+    const total = dividends + extra + treasury;
+    if (dividendsEl) dividendsEl.textContent = `$${dividends.toFixed(2)}`;
+    if (extraEl) extraEl.textContent = `$${extra.toFixed(2)}`;
+    if (treasuryEl) treasuryEl.textContent = `$${treasury.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+    // generate simple random line chart
+    if (chartContainer) {
+      const width = chartContainer.clientWidth || 300;
+      const height = chartContainer.clientHeight || 150;
+      const points = [];
+      const numPoints = 6;
+      for (let i = 0; i < numPoints; i++) {
+        points.push({
+          x: (i / (numPoints - 1)) * width,
+          y: height - Math.random() * height * 0.8 - height * 0.1
+        });
+      }
+      let path = '';
+      points.forEach((p, idx) => {
+        path += (idx === 0 ? 'M' : 'L') + p.x + ' ' + p.y + ' ';
+      });
+      chartContainer.innerHTML = `<svg width="100%" height="160" viewBox="0 0 ${width} 160" preserveAspectRatio="none"><path d="${path}" fill="none" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--color-primary') || '#7a27b5'}" stroke-width="2" /></svg>`;
+    }
+  }
+
+  // Attach event handlers for deposit and cash out on account page
+  function initAccountActions() {
+    const depositBtn = document.querySelector('.deposit-btn');
+    const cashoutBtn = document.querySelector('.cashout-btn');
+    const profilePicture = document.getElementById('profilePicture');
+    if (depositBtn) {
+      depositBtn.addEventListener('click', () => {
+        const user = getCurrentUser();
+        if (!user) {
+          alert('Please log in.');
+          return;
+        }
+        const amountStr = prompt('Enter amount to deposit:');
+        const amount = parseFloat(amountStr);
+        if (!amount || amount <= 0) return;
+        user.balance += amount;
+        saveCurrentUser(user);
+        alert(`Deposited $${amount.toFixed(2)}.`);
+        renderAccount();
+        updatePortfolioBar();
+      });
+    }
+    if (cashoutBtn) {
+      cashoutBtn.addEventListener('click', () => {
+        const user = getCurrentUser();
+        if (!user) {
+          alert('Please log in.');
+          return;
+        }
+        const amountStr = prompt(`You have $${user.balance.toFixed(2)} available. Enter amount to cash out:`);
+        const amount = parseFloat(amountStr);
+        if (!amount || amount <= 0) return;
+        if (amount > user.balance) {
+          alert('Amount exceeds available balance.');
+          return;
+        }
+        user.balance -= amount;
+        saveCurrentUser(user);
+        alert(`Cashed out $${amount.toFixed(2)}.`);
+        renderAccount();
+        updatePortfolioBar();
+      });
+    }
+    // Placeholder: clicking edit picture triggers file upload (not implemented)
+    if (profilePicture) {
+      // profilePicture currently just a circle; actual upload handling would require input elements
+    }
+  }
+
   // ---------- Dataset of available assets ----------
   const ASSET_LIST = [
     { name: 'Apple Inc.', class: 'dividend_paying_stock', yield: '0.46%', price: 227.76 },
@@ -526,6 +634,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial update of portfolio bar on page load
   updatePortfolioBar();
+
+  // Render account page and attach actions if on account.html
+  renderAccount();
+  initAccountActions();
 
   // Update positions progress every second (for 2 minute maturity).
   setInterval(() => {

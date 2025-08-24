@@ -844,6 +844,149 @@ a {
   color: var(--color-primary);
 }
 
+/* Account page styles */
+.account-section {
+  padding: 3rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.account-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.account-sidebar {
+  flex: 1 1 220px;
+  max-width: 260px;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.account-sidebar .profile-box {
+  text-align: center;
+}
+.account-sidebar .profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  margin: 0 auto;
+}
+.account-sidebar .edit-picture-btn {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.sidebar-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.account-side-btn {
+  display: block;
+  padding: 0.6rem 0.8rem;
+  text-align: center;
+  border: 2px solid var(--color-primary);
+  border-radius: 6px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.account-side-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.account-main {
+  flex: 1 1 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.account-chart-box {
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  position: relative;
+  min-height: 220px;
+}
+.account-chart-box .account-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.account-chart-box .chart-range-select {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+}
+.account-chart-box .chart-range-select span {
+  cursor: pointer;
+}
+.account-chart-box .chart-range-select span.active {
+  font-weight: 700;
+  text-decoration: underline;
+}
+.chart-placeholder {
+  width: 100%;
+  height: 160px;
+  margin-top: 1rem;
+}
+
+.account-stats {
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.stat-item {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.total-item {
+  grid-column: span 2;
+  font-size: 1.2rem;
+}
+
+.account-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.account-actions button {
+  flex: 1 1 200px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-primary);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.account-actions button:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
 .position-actions {
   display: flex;
   gap: 0.5rem;
