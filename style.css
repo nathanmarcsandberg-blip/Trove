@@ -220,6 +220,38 @@ a {
   color: var(--color-secondary);
 }
 
+/* Login page styles */
+.login-section {
+  padding: 3rem 2rem;
+  max-width: 400px;
+  margin: 3rem auto;
+  background-color: var(--color-light);
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.login-section h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.login-section input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+}
+
 .pool-cards {
   display: flex;
   justify-content: space-around;
