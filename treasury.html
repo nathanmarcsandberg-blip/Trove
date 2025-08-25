@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trove Treasury – Trove</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header with navigation -->
+    <header class="site-header">
+      <a class="logo-container" href="index.html" aria-label="Trove home">
+        <img src="logo512.png" alt="Trove logo" class="logo-img" />
+        <span class="logo-text">TROVE</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html">home</a>
+        <a href="how-it-works.html">how it works</a>
+        <a href="assets.html">assets</a>
+        <a href="treasury.html" class="active-nav">treasury</a>
+        <a href="account.html" class="account-link">account</a>
+        <a href="login.html" class="login-btn">log in</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="treasury-section">
+        <h1 class="section-heading" style="text-align:center; text-transform:capitalize">trove treasury</h1>
+        <!-- Top summary cards -->
+        <div class="treasury-summary">
+          <!-- Treasury feeds card -->
+          <div class="treasury-card">
+            <h3>treasury feeds this month</h3>
+            <ul class="treasury-feeds-list">
+              <li>spreads – $10,023</li>
+              <li>early exit fees – $2,034</li>
+              <li>skip maturity fees – $2,340</li>
+              <li>subscription fees – $830</li>
+              <li>reinvest dividends – $450</li>
+              <li>crypto swaps – $630</li>
+              <li>crypto withdrawals – $230</li>
+            </ul>
+          </div>
+          <!-- AUM & history card -->
+          <div class="treasury-card">
+            <h3>Total AUM</h3>
+            <div class="treasury-aum-value">$3,200,103</div>
+            <h4 style="margin-top:1rem; font-size:1rem; font-weight:600;">historical yields</h4>
+            <table class="treasury-history-table">
+              <thead>
+                <tr><th>month</th><th>amount</th><th>users</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>jul&nbsp;25</td><td>$25,000</td><td>26,743</td></tr>
+                <tr><td>jun&nbsp;25</td><td>$23,000</td><td>24,900</td></tr>
+                <tr><td>may&nbsp;25</td><td>$28,000</td><td>24,382</td></tr>
+                <tr><td>apr&nbsp;25</td><td>$18,000</td><td>23,000</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Current treasury breakdown -->
+        <div class="treasury-breakdown">
+          <h3 class="section-heading" style="font-size:1.4rem;">current treasury breakdown</h3>
+          <div class="pool-cards">
+            <div class="pool-card">
+              <h4>ETH Pool</h4>
+              <p>32&nbsp;ETH</p>
+              <p>yield 2&nbsp;ETH</p>
+              <p>Maturity 29th August</p>
+            </div>
+            <div class="pool-card">
+              <h4>USDC Pool</h4>
+              <p>$140,056&nbsp;USDC</p>
+              <p>yield $2,304</p>
+              <p>Maturity 12th September</p>
+            </div>
+            <div class="pool-card">
+              <h4>SOL Growth Pool</h4>
+              <p>1,200&nbsp;SOL</p>
+              <p>yield 30&nbsp;SOL</p>
+              <p>Maturity 15th September</p>
+            </div>
+            <div class="pool-card">
+              <h4>Diversified Crypto Pool</h4>
+              <p>50% BTC, 30% ETH, 20% USDC</p>
+              <p>yield 7%</p>
+              <p>Maturity 1st October</p>
+            </div>
+            <div class="pool-card">
+              <h4>Stable Yield Pool</h4>
+              <p>200,000&nbsp;USDT</p>
+              <p>yield 5.5%</p>
+              <p>Maturity 20th November</p>
+            </div>
+          </div>
+        </div>
+        <!-- Raffle history section -->
+        <div class="raffle-history">
+          <h3 class="section-heading" style="font-size:1.4rem;">raffle history</h3>
+          <div class="raffle-cards">
+            <div class="raffle-card">
+              <h4>April</h4>
+              <p><strong>2nd</strong> user&nbsp;2<br />$1,000</p>
+            </div>
+            <div class="raffle-card" style="flex:1.5">
+              <h4>May</h4>
+              <p><strong>1st</strong> user&nbsp;1<br />$2,000</p>
+            </div>
+            <div class="raffle-card">
+              <h4>May</h4>
+              <p><strong>3rd</strong> user&nbsp;3<br />$500</p>
+            </div>
+            <div class="raffle-card">
+              <h4>June</h4>
+              <p><strong>1st</strong> user&nbsp;4<br />$1,800</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Portfolio sticky bar -->
+    <div id="portfolioBar" class="portfolio-bar" style="display:none;"></div>
+
+    <footer class="site-footer">
+      <p>&copy; 2025 Trove. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>

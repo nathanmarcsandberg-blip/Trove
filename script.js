@@ -83,34 +83,41 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     // compute total portfolio value (current prices)
-    let totalValue = 0;
+    let portfolioValue = 0;
     if (Array.isArray(user.positions)) {
       user.positions.forEach((pos) => {
         const asset = ASSET_LIST.find((a) => a.name === pos.name);
         const price = asset ? asset.price : pos.purchasePrice;
-        totalValue += pos.quantity * price;
+        portfolioValue += pos.quantity * price;
       });
     }
-    const value = totalValue.toFixed(2);
+    // available balance from user record
+    const available = typeof user.balance === 'number' ? user.balance : 0;
+    // compute account value as available balance plus portfolio value
+    const accountValue = (available + portfolioValue);
+    const portfolioStr = portfolioValue.toFixed(2);
+    const availableStr = available.toFixed(2);
+    const accountStr = accountValue.toFixed(2);
     // simulate 24h return between -3% and +3%
     const return24h = (Math.random() * 6 - 3).toFixed(2);
-    // last month yield as 1% of total value (placeholder)
-    const lastMonthYield = (totalValue * 0.01).toFixed(2);
+    // last month yield as 1% of portfolio value (placeholder)
+    const lastMonthYield = (portfolioValue * 0.01).toFixed(2);
     const returnColor = return24h >= 0 ? '#009900' : '#cc0000';
     bar.innerHTML = `
       <div class="portfolio-section">
-        <div class="portfolio-label"><a href="positions.html" class="portfolio-link">my portfolio</a></div>
+        <a href="positions.html" class="portfolio-link">my portfolio</a>
       </div>
       <div class="portfolio-section">
         <div style="font-weight:600;">24hrs</div>
         <div style="color:${returnColor}; font-size:1.4rem; font-weight:600;">${return24h}%</div>
       </div>
       <div class="portfolio-section">
-        <div style="font-weight:600;">Portfolio Value</div>
-        <div class="portfolio-value">$${value}</div>
+        <div style="font-weight:600;">account value</div>
+        <div class="portfolio-value">$${accountStr}</div>
+        <div style="font-size:0.8rem; color:var(--color-grey)">avail $${availableStr} + port $${portfolioStr}</div>
       </div>
       <div class="portfolio-section">
-        <div style="font-weight:600;">Last Month's Yield</div>
+        <div style="font-weight:600;">last month's yield</div>
         <div style="font-size:1.4rem; font-weight:600;">+$${lastMonthYield}</div>
       </div>
     `;
