@@ -219,6 +219,215 @@ a {
   margin: 0;
 }
 
+/* ---------- Treasury asset breakdown slider ---------- */
+/* Wrapper for arrow buttons and row */
+.asset-row-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+/* Scrollable row containing individual asset cards */
+.asset-row-wrapper {
+  display: flex;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  width: 100%;
+}
+/* Each asset card displays a ticker and dollar value */
+.asset-card {
+  flex: 0 0 140px;
+  margin-right: 0.5rem;
+  background: var(--color-light);
+  border: 2px solid var(--color-secondary);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  white-space: nowrap;
+}
+/* Arrow buttons for scrolling the asset row */
+.asset-nav {
+  background: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s ease;
+}
+.asset-nav:hover {
+  background: #00224e;
+}
+.asset-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Feeds table styles */
+/* Feeds table uses a grid to align category and amount */
+.feeds-table {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 0.4rem;
+  font-size: 0.9rem;
+}
+.feed-row {
+  display: contents;
+}
+.feed-row span:first-child {
+  text-transform: capitalize;
+  padding-right: 0.5rem;
+}
+.feed-row span:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+.feed-row:not(:last-of-type) span {
+  border-bottom: 1px solid #f5f5f5;
+  padding-bottom: 0.3rem;
+}
+
+/* Pools slider styles */
+.pools-slider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.pools-wrapper {
+  display: flex;
+  transition: transform 0.4s ease;
+  width: 100%;
+}
+.pools-nav {
+  background: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  flex: 0 0 auto;
+  margin: 0 0.5rem;
+  transition: background 0.2s ease;
+}
+.pools-nav:hover {
+  background: #00224e;
+}
+.pools-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+/* Pool card inside slider */
+.pool-card {
+  flex: 0 0 calc(100% / 7 - 0.5rem);
+  /* 7 cards visible minus gaps */
+  margin-right: 0.5rem;
+  background-color: var(--color-light);
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+/* Titles inside pool slider reuse existing definitions */
+
+/* Raffle slider styles */
+.raffle-slider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.raffle-content {
+  flex: 1 1 auto;
+  display: flex;
+  transition: transform 0.4s ease;
+}
+.raffle-nav {
+  background: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  flex: 0 0 auto;
+  margin: 0 0.5rem;
+  transition: background 0.2s ease;
+}
+.raffle-nav:hover {
+  background: #00224e;
+}
+.raffle-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.raffle-slide {
+  min-width: 100%;
+  flex: 0 0 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.raffle-slide h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+  text-transform: capitalize;
+}
+.leaderboard {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+.leaderboard .place-card {
+  flex: 1 1 30%;
+  background-color: var(--color-light);
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.04);
+}
+.leaderboard .place-card:first-child {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+.leaderboard .place-card:first-child h5 {
+  color: var(--color-light);
+}
+.leaderboard .place-card:first-child p {
+  color: var(--color-light);
+}
+.leaderboard .place-card h5 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.leaderboard .place-card p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
 .site-nav {
   display: flex;
   align-items: center;

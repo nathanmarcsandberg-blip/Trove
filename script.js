@@ -688,6 +688,186 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAccount();
   initAccountActions();
 
+  // Initialize treasury page sliders and interactivity if present
+  initTreasurySliders();
+
+  // ---------- Initialize treasury sliders (pools and raffle) ----------
+  function initTreasurySliders() {
+    // Pools slider
+    const poolsWrapper = document.getElementById('poolsWrapper');
+    const poolsPrevBtn = document.querySelector('.pools-prev');
+    const poolsNextBtn = document.querySelector('.pools-next');
+    if (poolsWrapper && poolsPrevBtn && poolsNextBtn) {
+      // Define 12 fictional pools with name and details
+      const pools = [
+        { title: 'ETH Pool', details: ['32 ETH', 'yield 2 ETH', 'Maturity 29th August'] },
+        { title: 'USDC Pool', details: ['$140,056 USDC', 'yield $2,304', 'Maturity 12th September'] },
+        { title: 'SOL Growth Pool', details: ['1,200 SOL', 'yield 30 SOL', 'Maturity 15th September'] },
+        { title: 'Diversified Crypto Pool', details: ['50% BTC, 30% ETH, 20% USDC', 'yield 7%', 'Maturity 1st October'] },
+        { title: 'Stable Yield Pool', details: ['200,000 USDT', 'yield 5.5%', 'Maturity 20th November'] },
+        { title: 'BTC Growth Pool', details: ['10 BTC', 'yield 0.5 BTC', 'Maturity 22nd August'] },
+        { title: 'ETH2 Staking Pool', details: ['64 ETH', 'yield 3 ETH', 'Maturity 2nd September'] },
+        { title: 'AVAX Growth Pool', details: ['3,000 AVAX', 'yield 50 AVAX', 'Maturity 10th November'] },
+        { title: 'DOT Index Pool', details: ['10,000 DOT', 'yield 300 DOT', 'Maturity 18th December'] },
+        { title: 'Crypto Index Pool', details: ['30% BTC, 30% ETH, 40% alt', 'yield 8%', 'Maturity 5th January'] },
+        { title: 'Metaverse Pool', details: ['100 MANA, 100 SAND', 'yield 10 MANA + 10 SAND', 'Maturity 23rd September'] },
+        { title: 'Commodity Token Pool', details: ['$50K Gold tokens, $20K Silver tokens', 'yield 4%', 'Maturity 30th December'] }
+      ];
+      poolsWrapper.innerHTML = '';
+      pools.forEach((pool) => {
+        const card = document.createElement('div');
+        card.className = 'pool-card';
+        const title = document.createElement('h4');
+        title.textContent = pool.title;
+        card.appendChild(title);
+        pool.details.forEach((line) => {
+          const p = document.createElement('p');
+          p.textContent = line;
+          card.appendChild(p);
+        });
+        poolsWrapper.appendChild(card);
+      });
+      let poolsIndex = 0;
+      const visibleCards = 7;
+      const totalCards = pools.length;
+      function updatePoolsSlider() {
+        // compute the width of one card including margin
+        const cardEl = poolsWrapper.children[0];
+        if (!cardEl) return;
+        const cardWidth = cardEl.getBoundingClientRect().width + 8; // margin-right set to 0.5rem (approx 8px)
+        const offset = poolsIndex * cardWidth;
+        poolsWrapper.style.transform = `translateX(-${offset}px)`;
+        poolsPrevBtn.disabled = poolsIndex <= 0;
+        poolsNextBtn.disabled = poolsIndex >= totalCards - visibleCards;
+      }
+      poolsPrevBtn.addEventListener('click', () => {
+        if (poolsIndex > 0) {
+          poolsIndex -= 1;
+          updatePoolsSlider();
+        }
+      });
+      poolsNextBtn.addEventListener('click', () => {
+        if (poolsIndex < totalCards - visibleCards) {
+          poolsIndex += 1;
+          updatePoolsSlider();
+        }
+      });
+      // call once to set initial state
+      setTimeout(updatePoolsSlider, 50);
+    }
+    // Raffle slider
+    const raffleContent = document.getElementById('raffleContent');
+    const rafflePrevBtn = document.querySelector('.raffle-prev');
+    const raffleNextBtn = document.querySelector('.raffle-next');
+    if (raffleContent && rafflePrevBtn && raffleNextBtn) {
+      const raffleData = [
+        {
+          month: 'April',
+          winners: [
+            { place: '1st', user: 'user 1', prize: '$2,000' },
+            { place: '2nd', user: 'user 2', prize: '$1,000' },
+            { place: '3rd', user: 'user 3', prize: '$500' }
+          ]
+        },
+        {
+          month: 'May',
+          winners: [
+            { place: '1st', user: 'user 4', prize: '$2,500' },
+            { place: '2nd', user: 'user 5', prize: '$1,200' },
+            { place: '3rd', user: 'user 6', prize: '$600' }
+          ]
+        },
+        {
+          month: 'June',
+          winners: [
+            { place: '1st', user: 'user 7', prize: '$1,800' },
+            { place: '2nd', user: 'user 8', prize: '$900' },
+            { place: '3rd', user: 'user 9', prize: '$400' }
+          ]
+        },
+        {
+          month: 'July',
+          winners: [
+            { place: '1st', user: 'user 10', prize: '$2,200' },
+            { place: '2nd', user: 'user 11', prize: '$1,100' },
+            { place: '3rd', user: 'user 12', prize: '$550' }
+          ]
+        }
+      ];
+      raffleContent.innerHTML = '';
+      raffleData.forEach((entry) => {
+        const slide = document.createElement('div');
+        slide.className = 'raffle-slide';
+        const heading = document.createElement('h4');
+        heading.textContent = entry.month;
+        slide.appendChild(heading);
+        const leaderboard = document.createElement('div');
+        leaderboard.className = 'leaderboard';
+        entry.winners.forEach((win) => {
+          const card = document.createElement('div');
+          card.className = 'place-card';
+          const place = document.createElement('h5');
+          place.textContent = win.place;
+          card.appendChild(place);
+          const user = document.createElement('p');
+          user.innerHTML = `<strong>${win.user}</strong>`;
+          card.appendChild(user);
+          const prize = document.createElement('p');
+          prize.textContent = win.prize;
+          card.appendChild(prize);
+          leaderboard.appendChild(card);
+        });
+        slide.appendChild(leaderboard);
+        raffleContent.appendChild(slide);
+      });
+      let raffleIndex = 0;
+      const maxRaffleIndex = raffleData.length - 1;
+      function updateRaffleSlider() {
+        raffleContent.style.transform = `translateX(-${raffleIndex * 100}%)`;
+        rafflePrevBtn.disabled = raffleIndex <= 0;
+        raffleNextBtn.disabled = raffleIndex >= maxRaffleIndex;
+      }
+      rafflePrevBtn.addEventListener('click', () => {
+        if (raffleIndex > 0) {
+          raffleIndex -= 1;
+          updateRaffleSlider();
+        }
+      });
+      raffleNextBtn.addEventListener('click', () => {
+        if (raffleIndex < maxRaffleIndex) {
+          raffleIndex += 1;
+          updateRaffleSlider();
+        }
+      });
+      // initial call after DOM has inserted slides
+      setTimeout(updateRaffleSlider, 50);
+    }
+    // Asset breakdown row scroll
+    const assetWrapper = document.getElementById('assetRowWrapper');
+    const assetPrevBtn = document.querySelector('.asset-prev');
+    const assetNextBtn = document.querySelector('.asset-next');
+    if (assetWrapper && assetPrevBtn && assetNextBtn) {
+      function updateAssetNav() {
+        // update disabled states when scroll reaches ends
+        const scrollLeft = assetWrapper.scrollLeft;
+        const maxScroll = assetWrapper.scrollWidth - assetWrapper.clientWidth;
+        assetPrevBtn.disabled = scrollLeft <= 0;
+        assetNextBtn.disabled = scrollLeft >= maxScroll;
+      }
+      assetPrevBtn.addEventListener('click', () => {
+        assetWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+        setTimeout(updateAssetNav, 200);
+      });
+      assetNextBtn.addEventListener('click', () => {
+        assetWrapper.scrollBy({ left: 200, behavior: 'smooth' });
+        setTimeout(updateAssetNav, 200);
+      });
+      // update nav states on scroll
+      assetWrapper.addEventListener('scroll', updateAssetNav);
+      setTimeout(updateAssetNav, 50);
+    }
+  }
+
   // Update positions progress every second (for 2 minute maturity).
   setInterval(() => {
     renderPositions();
