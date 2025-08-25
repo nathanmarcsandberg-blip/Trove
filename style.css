@@ -1141,56 +1141,66 @@ a {
   left: 0;
   width: 100%;
   background: #fff;
-  border-top: 2px solid var(--color-primary);
+  /* Enclose the portfolio bar with a subtle border and rounded corners */
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px 8px 0 0;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1.25rem;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.06);
   z-index: 1000;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 .portfolio-bar .portfolio-section {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  padding: 0.75rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  justify-content: center;
+  align-items: center;
+  /* Add equal spacing between label and value for cleaner layout */
+  text-align: center;
 }
 .portfolio-bar .portfolio-section:not(:first-child) {
-  border-left: 1px solid var(--color-primary);
-  padding-left: 1rem;
+  border-left: 1px solid var(--color-secondary);
 }
 .portfolio-bar .portfolio-label {
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  color: var(--color-grey);
+  margin-bottom: 0.1rem;
 }
 .portfolio-bar .portfolio-value {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--color-dark);
 }
 .portfolio-bar .portfolio-link {
-  /* Style the portfolio link as a button centered in its section */
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: var(--color-primary);
-  color: var(--color-light);
-  border-radius: 24px;
-  font-weight: 600;
+  /* Style the portfolio link as prominent text rather than a button */
+  display: inline-block;
+  padding: 0;
+  background: none;
+  color: var(--color-dark);
+  border: none;
+  font-weight: 700;
+  font-size: 1.6rem;
   text-transform: lowercase;
-  margin: 0 auto;
-  min-width: 8rem;
+  cursor: pointer;
+  margin: 0;
 }
 
 /* Center the first section of the portfolio bar */
-.portfolio-bar .portfolio-section:first-child {
+/* The first segment of the portfolio bar (portfolio link) */
+.portfolio-bar .portfolio-first {
+  /* Allocate more space for the portfolio label and center its content */
+  flex: 0 0 220px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 0 0 auto;
+  border-right: 1px solid var(--color-secondary);
 }
 
 /* Account page styles */
