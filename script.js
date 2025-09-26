@@ -1064,3 +1064,218 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ================== Trove MVP: Daily Price/Dividend Cache ==================
+(function(){
+  const LSK_CACHE = 'trove_prices_cache_v1';
+  const LSK_UPDATED = 'trove_prices_last_updated_v1';
+
+  // ---- API Keys (MVP; WARNING: client-side exposure) ----
+  // For production, move these to a backend. For now, these default from hardcoded constants,
+  // but you can override by setting localStorage keys with the same names.
+  const API_KEYS = {
+    CMC: localStorage.getItem('TROVE_API_CMC') || 'B0a32361-b081-4f56-8256-421616ac1618',
+    TWELVE: localStorage.getItem('TROVE_API_TWELVE') || '7791647f5c1e478982a3dd702c82105b',
+    METAL: localStorage.getItem('TROVE_API_METAL') || 'Fda0bb2a0f5f5e9de80ad2096dd8f4de',
+    FX: localStorage.getItem('TROVE_API_FX') || 'Eca81f4d468fddd03cf25e4363fcdaf0'
+  };
+
+  // ---- Symbol maps (minimal demo set) ----
+  const MAP_EQUITY = {
+    'Apple Inc.': 'AAPL',
+    'Microsoft Corporation': 'MSFT',
+    'Johnson & Johnson': 'JNJ',
+    'The Procter & Gamble Company': 'PG',
+    'The Coca-Cola Company': 'KO',
+    'PepsiCo, Inc.': 'PEP',
+    "McDonald's Corporation": 'MCD',
+    'Walmart Inc.': 'WMT',
+    'Verizon Communications Inc.': 'VZ',
+    'AT&T Inc.': 'T',
+    'International Business Machines Corporation': 'IBM',
+    'Cisco Systems, Inc.': 'CSCO',
+    'Exxon Mobil Corporation': 'XOM',
+    'Chevron Corporation': 'CVX'
+  };
+
+  const MAP_CRYPTO = {
+    'Bitcoin': 'BTC',
+    'Ethereum': 'ETH'
+  };
+
+  const METALS = { gold: 'XAU', silver: 'XAG' };
+
+  function fmtDateTag(d){
+    const pad = (n)=> String(n).padStart(2,'0');
+    return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  function sameCalendarDay(aISO, bISO){
+    if (!aISO || !bISO) return false;
+    const a = new Date(aISO); const b = new Date(bISO);
+    return a.getUTCFullYear()===b.getUTCFullYear() && a.getUTCMonth()===b.getUTCMonth() && a.getUTCDate()===b.getUTCDate();
+  }
+
+  function getCache(){
+    try { return JSON.parse(localStorage.getItem(LSK_CACHE) || '{}'); } catch { return {}; }
+  }
+  function setCache(obj){
+    localStorage.setItem(LSK_CACHE, JSON.stringify(obj));
+  }
+
+  function applyCacheToAssets(){
+    const cache = getCache();
+    if (!cache.prices) return;
+    ASSET_LIST.forEach(a=>{
+      const hit = cache.prices[a.name];
+      if (hit && typeof hit.price === 'number') a.price = hit.price;
+      if (typeof hit?.yield === 'string') a.yield = hit.yield;
+    });
+    // update UI
+    renderAssetsList?.();
+  }
+
+  function setUpdatedTag(iso){
+    const tag = document.getElementById('pricesUpdatedTag');
+    if (tag) {
+      tag.textContent = `Prices Last Updated: ${iso ? fmtDateTag(new Date(iso)) : '—'}`;
+    }
+  }
+
+  async function fetchCryptoUpdates(){
+    const names = Object.keys(MAP_CRYPTO);
+    if (names.length===0) return {};
+    const symbols = Object.values(MAP_CRYPTO).join(',');
+    // CoinMarketCap quotes latest
+    const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${encodeURIComponent(symbols)}&convert=USD`;
+    const res = await fetch(url, { headers: { 'X-CMC_PRO_API_KEY': API_KEYS.CMC }});
+    if (!res.ok) throw new Error('CMC fetch failed');
+    const json = await res.json();
+    const out = {};
+    for (const [name, sym] of Object.entries(MAP_CRYPTO)){
+      const p = json?.data?.[sym]?.quote?.USD?.price;
+      if (typeof p === 'number') out[name] = { price: p };
+    }
+    return out;
+  }
+
+  async function fetchEquityUpdates(){
+    const names = Object.keys(MAP_EQUITY);
+    if (names.length===0) return {};
+    const symbols = Object.values(MAP_EQUITY).join(',');
+    const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(symbols)}&apikey=${API_KEYS.TWELVE}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('TwelveData fetch failed');
+    const json = await res.json();
+    const out = {};
+    // json is an object keyed by symbol if multiple requested, or has "symbol" if single
+    if (json && !json.status && !json.code) {
+      if (json.symbol) {
+        const p = parseFloat(json.close);
+        const y = json.dividend_yield != null ? String(json.dividend_yield) : '';
+        const nm = Object.keys(MAP_EQUITY).find(n => MAP_EQUITY[n]===json.symbol) || json.symbol;
+        if (!isNaN(p)) out[nm] = { price: p, yield: y ? `${y}%` : '' };
+      } else {
+        for (const [sym, data] of Object.entries(json)){
+          const p = parseFloat(data.close);
+          const y = data.dividend_yield != null ? String(data.dividend_yield) : '';
+          const nm = Object.keys(MAP_EQUITY).find(n => MAP_EQUITY[n]===sym) || sym;
+          if (!isNaN(p)) out[nm] = { price: p, yield: y ? `${y}%` : '' };
+        }
+      }
+    }
+    return out;
+  }
+
+  async function fetchMetalUpdates(){
+    // MetalPrice API: latest metals in USD
+    const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEYS.METAL}&base=USD&currencies=${METALS.gold},${METALS.silver}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('MetalPrice fetch failed');
+    const json = await res.json();
+    const out = {};
+    const xauPerUsd = json?.rates?.[METALS.gold]; // USD base; need USD per XAU -> invert
+    const xagPerUsd = json?.rates?.[METALS.silver];
+    if (xauPerUsd) {
+      const usdPerXau = 1/parseFloat(xauPerUsd);
+      // Map to any gold asset names present
+      const goldCandidates = ASSET_LIST.filter(a => /gold/i.test(a.name));
+      goldCandidates.forEach(a => out[a.name] = { price: usdPerXau });
+    }
+    if (xagPerUsd) {
+      const usdPerXag = 1/parseFloat(xagPerUsd);
+      const silverCandidates = ASSET_LIST.filter(a => /silver/i.test(a.name));
+      silverCandidates.forEach(a => out[a.name] = { price: usdPerXag });
+    }
+    return out;
+  }
+
+  async function updateAllRates(force=false){
+    const nowISO = new Date().toISOString();
+    const lastISO = localStorage.getItem(LSK_UPDATED);
+    if (!force && sameCalendarDay(lastISO, nowISO)) {
+      // don't fetch; just apply cache and set tag
+      applyCacheToAssets();
+      setUpdatedTag(lastISO);
+      return { skipped: true };
+    }
+    // Fetch in parallel, tolerate failures
+    const cache = getCache();
+    cache.prices = cache.prices || {};
+    const updates = await Promise.allSettled([
+      fetchCryptoUpdates(),
+      fetchEquityUpdates(),
+      fetchMetalUpdates()
+    ]);
+    for (const res of updates){
+      if (res.status==='fulfilled' && res.value){
+        for (const [nm, v] of Object.entries(res.value)){
+          cache.prices[nm] = { ...(cache.prices[nm]||{}), ...v, ts: nowISO };
+        }
+      }
+    }
+    // Apply to ASSET_LIST
+    for (const a of ASSET_LIST){
+      const hit = cache.prices[a.name];
+      if (hit?.price != null) a.price = hit.price;
+      if (hit?.yield != null) a.yield = hit.yield;
+    }
+    setCache(cache);
+    localStorage.setItem(LSK_UPDATED, nowISO);
+    setUpdatedTag(nowISO);
+    renderAssetsList?.();
+    return { skipped: false };
+  }
+
+  // Wire up on assets page
+  document.addEventListener('DOMContentLoaded', ()=>{
+    // Only run on assets page where the tag/button exist
+    const tag = document.getElementById('pricesUpdatedTag');
+    if (!tag) return;
+    // Apply cache immediately
+    applyCacheToAssets();
+    // Set tag to last updated if exists
+    const lastISO = localStorage.getItem(LSK_UPDATED);
+    setUpdatedTag(lastISO);
+    // Button to force update
+    const btn = document.getElementById('updateRatesBtn');
+    if (btn) {
+      btn.addEventListener('click', async ()=>{
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+        try {
+          await updateAllRates(true);
+        } catch (e){
+          console.error(e);
+          alert('Update failed. See console.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Update Rates';
+        }
+      });
+    }
+    // Also attempt a once-per-day auto update on first load
+    updateAllRates(false).catch(console.warn);
+  });
+
+})();
