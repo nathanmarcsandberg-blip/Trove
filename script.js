@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = getCurrentUser();
     // Lower‑case search term for case‑insensitive filtering
     const searchLower = currentSearchQuery.trim().toLowerCase();
-    let filtered = ASSET_LIST.filter((asset) => asset.name.toLowerCase().includes(searchLower));
+    let filtered = Array.isArray(globalThis.ASSET_LIST) ? globalThis.ASSET_LIST.filter((asset) => asset.name.toLowerCase().includes(searchLower));
     // Apply category filter (skip when "all")
     if (selectedCategory && selectedCategory !== 'all') {
       filtered = filtered.filter((asset) => asset.class === selectedCategory);
@@ -1126,7 +1126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function applyCacheToAssets(){
     const cache = getCache();
     if (!cache.prices) return;
-    ASSET_LIST.forEach(a=>{
+    if (Array.isArray(globalThis.ASSET_LIST)) globalThis.ASSET_LIST.forEach(a=>{
       const hit = cache.prices[a.name];
       if (hit && typeof hit.price === 'number') a.price = hit.price;
       if (typeof hit?.yield === 'string') a.yield = hit.yield;
@@ -1142,140 +1142,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function fetchCryptoUpdates(){
+  
+async function fetchCryptoUpdates(){
     const names = Object.keys(MAP_CRYPTO);
     if (names.length===0) return {};
-    const symbols = Object.values(MAP_CRYPTO).join(',');
-    // CoinMarketCap quotes latest
-    const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${encodeURIComponent(symbols)}&convert=USD`;
-    const res = await fetch(url, { headers: { 'X-CMC_PRO_API_KEY': API_KEYS.CMC }});
-    if (!res.ok) throw new Error('CMC fetch failed');
-    const json = await res.json();
-    const out = {};
-    for (const [name, sym] of Object.entries(MAP_CRYPTO)){
-      const p = json?.data?.[sym]?.quote?.USD?.price;
-      if (typeof p === 'number') out[name] = { price: p };
-    }
-    return out;
-  }
-
-  async function fetchEquityUpdates(){
-    const names = Object.keys(MAP_EQUITY);
-    if (names.length===0) return {};
-    const symbols = Object.values(MAP_EQUITY).join(',');
-    const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(symbols)}&apikey=${API_KEYS.TWELVE}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('TwelveData fetch failed');
-    const json = await res.json();
-    const out = {};
-    // json is an object keyed by symbol if multiple requested, or has "symbol" if single
-    if (json && !json.status && !json.code) {
-      if (json.symbol) {
-        const p = parseFloat(json.close);
-        const y = json.dividend_yield != null ? String(json.dividend_yield) : '';
-        const nm = Object.keys(MAP_EQUITY).find(n => MAP_EQUITY[n]===json.symbol) || json.symbol;
-        if (!isNaN(p)) out[nm] = { price: p, yield: y ? `${y}%` : '' };
-      } else {
-        for (const [sym, data] of Object.entries(json)){
-          const p = parseFloat(data.close);
-          const y = data.dividend_yield != null ? String(data.dividend_yield) : '';
-          const nm = Object.keys(MAP_EQUITY).find(n => MAP_EQUITY[n]===sym) || sym;
-          if (!isNaN(p)) out[nm] = { price: p, yield: y ? `${y}%` : '' };
+    // Try CoinGecko (CORS-friendly, no key)
+    const map = { BTC: 'bitcoin', ETH: 'ethereum' };
+    try {
+      const ids = Object.values(MAP_CRYPTO).map(s => map[s] || '').filter(Boolean).join(',');
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const j = await res.json();
+        const out = {};
+        for (const [name, sym] of Object.entries(MAP_CRYPTO)) {
+          const geckoId = map[sym];
+          const p = j?.[geckoId]?.usd;
+          if (typeof p === 'number') out[name] = { price: p };
         }
+        return out;
       }
-    }
-    return out;
-  }
-
-  async function fetchMetalUpdates(){
-    // MetalPrice API: latest metals in USD
-    const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEYS.METAL}&base=USD&currencies=${METALS.gold},${METALS.silver}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('MetalPrice fetch failed');
-    const json = await res.json();
+    } catch (e) { console.warn('CoinGecko failed', e); }
+    // Fallback: Coinbase public ticker (CORS OK)
     const out = {};
-    const xauPerUsd = json?.rates?.[METALS.gold]; // USD base; need USD per XAU -> invert
-    const xagPerUsd = json?.rates?.[METALS.silver];
-    if (xauPerUsd) {
-      const usdPerXau = 1/parseFloat(xauPerUsd);
-      // Map to any gold asset names present
-      const goldCandidates = ASSET_LIST.filter(a => /gold/i.test(a.name));
-      goldCandidates.forEach(a => out[a.name] = { price: usdPerXau });
-    }
-    if (xagPerUsd) {
-      const usdPerXag = 1/parseFloat(xagPerUsd);
-      const silverCandidates = ASSET_LIST.filter(a => /silver/i.test(a.name));
-      silverCandidates.forEach(a => out[a.name] = { price: usdPerXag });
+    for (const [name, sym] of Object.entries(MAP_CRYPTO)) {
+      try {
+        const r = await fetch(`https://api.exchange.coinbase.com/products/${sym}-USD/ticker`);
+        if (!r.ok) continue;
+        const j = await r.json();
+        const p = parseFloat(j.price);
+        if (!isNaN(p)) out[name] = { price: p };
+      } catch (e) { /* ignore */ }
     }
     return out;
-  }
-
-  async function updateAllRates(force=false){
-    const nowISO = new Date().toISOString();
-    const lastISO = localStorage.getItem(LSK_UPDATED);
-    if (!force && sameCalendarDay(lastISO, nowISO)) {
-      // don't fetch; just apply cache and set tag
-      applyCacheToAssets();
-      setUpdatedTag(lastISO);
-      return { skipped: true };
-    }
-    // Fetch in parallel, tolerate failures
-    const cache = getCache();
-    cache.prices = cache.prices || {};
-    const updates = await Promise.allSettled([
-      fetchCryptoUpdates(),
-      fetchEquityUpdates(),
-      fetchMetalUpdates()
-    ]);
-    for (const res of updates){
-      if (res.status==='fulfilled' && res.value){
-        for (const [nm, v] of Object.entries(res.value)){
-          cache.prices[nm] = { ...(cache.prices[nm]||{}), ...v, ts: nowISO };
-        }
-      }
-    }
-    // Apply to ASSET_LIST
-    for (const a of ASSET_LIST){
-      const hit = cache.prices[a.name];
-      if (hit?.price != null) a.price = hit.price;
-      if (hit?.yield != null) a.yield = hit.yield;
-    }
-    setCache(cache);
-    localStorage.setItem(LSK_UPDATED, nowISO);
-    setUpdatedTag(nowISO);
-    renderAssetsList?.();
-    return { skipped: false };
-  }
-
-  // Wire up on assets page
-  document.addEventListener('DOMContentLoaded', ()=>{
-    // Only run on assets page where the tag/button exist
-    const tag = document.getElementById('pricesUpdatedTag');
-    if (!tag) return;
-    // Apply cache immediately
-    applyCacheToAssets();
-    // Set tag to last updated if exists
-    const lastISO = localStorage.getItem(LSK_UPDATED);
-    setUpdatedTag(lastISO);
-    // Button to force update
-    const btn = document.getElementById('updateRatesBtn');
-    if (btn) {
-      btn.addEventListener('click', async ()=>{
-        btn.disabled = true;
-        btn.textContent = 'Updating...';
-        try {
-          await updateAllRates(true);
-        } catch (e){
-          console.error(e);
-          alert('Update failed. See console.');
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Update Rates';
-        }
-      });
-    }
-    // Also attempt a once-per-day auto update on first load
-    updateAllRates(false).catch(console.warn);
-  });
-
-})();
+}
+)();
