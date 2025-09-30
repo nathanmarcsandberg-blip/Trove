@@ -126,26 +126,78 @@
   }
 
   async function fetchMetals(map) {
-    console.log('[Metals] Start', map);
-    const codes = [...new Set(Object.values(map))].join(',');
-    if (!codes) return {};
-    const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API.METAL}&base=USD&currencies=${codes}`;
-    console.log('[Metals] URL:', url);
-    const r = await fetch(url);
-    console.log('[Metals] HTTP status:', r.status, r.statusText);
-    if (!r.ok) { try { console.log('[Metals] body:', await r.text()); } catch{} return {}; }
-    const j = await r.json();
-    console.log('[Metals] JSON:', j);
-    const out = {};
-    for (const [name, code] of Object.entries(map)) {
-      const rate = j?.rates?.[code];
-      if (!rate) { console.warn('[Metals] Missing rate for', code); continue; }
-      const usdPerUnit = 1/parseFloat(rate);
-      if (!isNaN(usdPerUnit)) out[name] = { price: usdPerUnit };
+  console.log('[Metals] Start (Twelve Data first, MetalPrice fallback)', map);
+
+  // Map XAU → "XAU/USD", XAG → "XAG/USD"
+  const tdPairs = Object.fromEntries(
+    Object.entries(map).map(([name, code]) => [name, `${code}/USD`])
+  );
+  const pairList = [...new Set(Object.values(tdPairs))].join(',');
+  const out = {};
+
+  // ---- Primary: Twelve Data quote ----
+  try {
+    if (pairList) {
+      const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(pairList)}&apikey=${API.TWELVE}`;
+      console.log('[Metals][TD] URL:', url);
+      const r = await fetch(url);
+      console.log('[Metals][TD] status:', r.status, r.statusText);
+      if (r.ok) {
+        const j = await r.json();
+        console.log('[Metals][TD] JSON:', j);
+
+        const byName = (pair) =>
+          Object.entries(tdPairs).find(([n, p]) => p === pair)?.[0] || pair;
+
+        if (j.symbol) {
+          const p = parseFloat(j.close);
+          const nm = byName(j.symbol);
+          if (!isNaN(p)) out[nm] = { price: p };
+        } else {
+          for (const [pair, data] of Object.entries(j)) {
+            const p = parseFloat(data.close);
+            const nm = byName(pair);
+            if (!isNaN(p)) out[nm] = { price: p };
+          }
+        }
+      } else {
+        try { console.log('[Metals][TD] body:', await r.text()); } catch {}
+      }
     }
-    console.log('[Metals] Parsed:', out);
-    return out;
+  } catch (e) {
+    console.error('[Metals][TD] error', e);
   }
+
+  // ---- Fallback: MetalPrice API (invert USD base) ----
+  const missing = Object.keys(map).filter((name) => !out[name]);
+  if (missing.length) {
+    const codesNeeded = [...new Set(missing.map((name) => map[name]))].join(',');
+    try {
+      const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API.METAL}&base=USD&currencies=${codesNeeded}`;
+      console.log('[Metals][MP] URL:', url);
+      const r = await fetch(url);
+      console.log('[Metals][MP] status:', r.status, r.statusText);
+      if (r.ok) {
+        const j = await r.json();
+        console.log('[Metals][MP] JSON:', j);
+        for (const name of missing) {
+          const code = map[name];
+          const rate = j?.rates?.[code];
+          if (!rate) { console.warn('[Metals][MP] missing rate for', code); continue; }
+          const usdPerUnit = 1 / parseFloat(rate); // USD base ⇒ invert
+          if (!isNaN(usdPerUnit)) out[name] = { price: usdPerUnit };
+        }
+      } else {
+        try { console.log('[Metals][MP] body:', await r.text()); } catch {}
+      }
+    } catch (e) {
+      console.error('[Metals][MP] error', e);
+    }
+  }
+
+  console.log('[Metals] Parsed (combined):', out);
+  return out;
+}
 
   // -------- Refresh --------
   async function refreshPrices(force=false){
