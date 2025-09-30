@@ -1,76 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assets – Trove</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="logo-container" href="index.html" aria-label="Trove home">
-        <img src="logo512.png" alt="Trove logo" class="logo-img" />
-        <span class="logo-text">TROVE</span>
-      </a>
-      <nav class="site-nav">
-        <a href="index.html">home</a>
-        <a href="how-it-works.html">how it works</a>
-        <a href="assets.html" class="active-nav">assets</a>
-        <!-- Replace contact with treasury -->
-        <a href="treasury.html">treasury</a>
-        <!-- Account link -->
-        <a href="account.html" class="account-link">account</a>
-        <a href="login.html" class="login-btn">log in</a>
-      </nav>
-    </header>
-    <main>
-      <!-- Assets section: heading, search/filter controls and dynamic list -->
-      <section class="assets-section">
-        <!-- Page title -->
-        <h2 class="section-heading assets-title">trove assets</h2>
-        <!-- Search bar to filter assets by name -->
-        <div class="assets-search-row">
-          <input
-            type="text"
-            id="assetSearch"
-            class="asset-search"
-            placeholder="Search assets..."
-          />
-        </div>
-        <!-- Category filter buttons -->
-        <div class="asset-categories">
-          <button class="category-btn active" data-category="all">All</button>
-          <button class="category-btn" data-category="dividend_paying_stock">Dividend Stock</button>
-          <button class="category-btn" data-category="non_dividend_paying_stock">Non‑Dividend Stock</button>
-          <button class="category-btn" data-category="cryptocurrency">Crypto</button>
-          <button class="category-btn" data-category="commodity">Commodity</button>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assets – Trove</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .assets-wrap{max-width:960px;margin:40px auto;padding:0 16px}
+    .asset-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 18px}
+    .asset-search{flex:1;min-width:260px;padding:10px;border-radius:10px;border:1px solid #ddd}
+    .pill{padding:8px 12px;border:1px solid #0b57d0;color:#0b57d0;background:#fff;border-radius:999px;cursor:pointer}
+    .pill.active{background:#0b57d0;color:#fff}
+    .price-tag{opacity:.8}
+    .btn{padding:8px 12px;border-radius:10px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .card{border:1px solid #eee;border-radius:14px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:6px}
+    .name{font-weight:600}
+    .meta{font-size:.92rem;opacity:.9}
+    .yield{font-weight:600}
+  </style>
+</head>
+<body>
+  <main class="assets-wrap">
+    <h1 style="text-align:center;margin-bottom:18px">trove assets</h1>
 
-        <!-- Price update controls -->
-        <div class="assets-update-row" style="display:flex;align-items:center;gap:12px;margin:10px 0 14px 0;">
-          <span id="pricesUpdatedTag" class="prices-updated-tag" style="font-size:0.95rem;opacity:0.8;">
-            Prices Last Updated: —
-          </span>
-          <button id="updateRatesBtn" class="update-rates-btn" style="padding:8px 12px;border-radius:10px;border:1px solid #ddd;cursor:pointer;">
-            Update Rates
-          </button>
-        </div>
-        <!-- Container for the dynamically generated asset cards -->
-        <div id="assetsList"></div>
-      </section>
-    </main>
-    <footer class="site-footer">
-      <p>&copy; 2025 Trove. All rights reserved.</p>
-    </footer>
+    <div class="asset-toolbar">
+      <input id="assetSearch" class="asset-search" placeholder="Search assets…"/>
+      <button class="pill active" data-cat="all">All</button>
+      <button class="pill" data-cat="dividend_paying_stock">Dividend Stock</button>
+      <button class="pill" data-cat="non_dividend_paying_stock">Non-Dividend Stock</button>
+      <button class="pill" data-cat="cryptocurrency">Crypto</button>
+      <button class="pill" data-cat="commodity">Commodity</button>
+    </div>
 
-    <!-- Portfolio sticky bar -->
-    <div id="portfolioBar" class="portfolio-bar" style="display:none;"></div>
-    <script src="script.js"></script>
-    <script src="assets-config.js" defer></script>
-  <script src="data-prices.js" defer></script>
+    <div class="asset-toolbar" style="justify-content:flex-start">
+      <span id="pricesUpdatedTag" class="price-tag">Prices Last Updated: —</span>
+      <button id="updateRatesBtn" class="btn">Update Rates</button>
+    </div>
+
+    <div id="assetsList" class="grid"></div>
+  </main>
+
+  <!-- ORDER MATTERS: config -> data layer -> page wiring -->
+  <script src="assets-config.js?v=104" defer></script>
+  <script src="data-prices.js?v=104" defer></script>
+  <script defer>
+    console.log('[Assets] inline script loaded');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('[Assets] DOMContentLoaded');
+
+      const listEl = document.getElementById('assetsList');
+      const tagEl  = document.getElementById('pricesUpdatedTag');
+      const btnEl  = document.getElementById('updateRatesBtn');
+      const searchEl = document.getElementById('assetSearch');
+      const pills = Array.from(document.querySelectorAll('.pill'));
+
+      let currentCat = 'all';
+      let q = '';
+
+      function render(){
+        const rows = window.TroveData?.getDisplayData?.() || [];
+        const filtered = rows.filter(r=>{
+          const catOk = currentCat==='all' ? true : r.class===currentCat;
+          const qOk = q ? r.name.toLowerCase().includes(q) : true;
+          return catOk && qOk;
+        });
+        console.log('[Assets] render', {currentCat, q, count: filtered.length});
+        listEl.innerHTML = filtered.map(r=>{
+          const priceStr = isFinite(r.price) ? `$${(+r.price).toFixed(2)}` : '—';
+          const y = (r.yield && r.yield!=='0' && r.yield!=='0%') ? ` • <span class="yield">${r.yield}</span>` : '';
+          return `<div class="card">
+            <div class="name">${r.name}</div>
+            <div class="meta">${priceStr}${y}</div>
+            <div style="font-size:.85rem;opacity:.7">${r.class.replaceAll('_',' ')}</div>
+          </div>`;
+        }).join('');
+      }
+
+      searchEl.addEventListener('input', e=>{ q = e.target.value.trim().toLowerCase(); render(); });
+      pills.forEach(p=>{
+        p.addEventListener('click', ()=>{
+          pills.forEach(x=>x.classList.remove('active'));
+          p.classList.add('active');
+          currentCat = p.dataset.cat;
+          render();
+        });
+      });
+
+      // Data events
+      if (window.TroveData) {
+        window.TroveData.onChange(() => {
+          const tag = window.TroveData.getLastUpdatedTag();
+          console.log('[Assets] onChange fired; tag=', tag);
+          tagEl.textContent = 'Prices Last Updated: ' + tag;
+          render();
+        });
+      } else {
+        console.warn('[Assets] TroveData not present');
+      }
+
+      // First paint
+      tagEl.textContent = 'Prices Last Updated: ' + (window.TroveData?.getLastUpdatedTag?.() || '—');
+      render();
+
+      btnEl.addEventListener('click', async ()=>{
+        console.log('[Assets] Update Rates clicked');
+        btnEl.disabled = true; const prev = btnEl.textContent; btnEl.textContent = 'Updating…';
+        try { await window.TroveData.refreshPrices(true); }
+        catch(e){ console.error('[Assets] manual refresh failed', e); alert('Update failed (see console).'); }
+        finally { btnEl.disabled = false; btnEl.textContent = prev; }
+      });
+
+      // Auto (no-op if already today)
+      window.TroveData.refreshPrices(false).catch(e=>console.warn('[Assets] auto refresh fail', e));
+    });
+  </script>
 </body>
 </html>
