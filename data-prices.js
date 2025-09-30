@@ -140,7 +140,7 @@
     console.log('[Metals] Start [MetalPrice API]', map);
     const codes = Array.from(new Set(Object.values(map))).join(',');
     if (!codes) return {};
-    const url = 'https://api.metalpriceapi.com/v1/latest?api_key=' + API.METAL + '&base=USD&currencies=' + codes;
+    const url = https://api.metalpriceapi.com/v1/latest?api_key=YOUR_KEY&base=USD&currencies=XAU,XAG;
     console.log('[Metals][MP] URL', url);
     try {
       const r = await fetch(url);
