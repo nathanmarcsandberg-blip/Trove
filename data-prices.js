@@ -116,8 +116,12 @@
   async function fetchMetals(map){
     const codes = Array.from(new Set(Object.values(map))).join(',');
     if (!codes) return {};
-    const url = 'https://api.metalpriceapi.com/v1/latest?api_key=' + encodeURIComponent(API.METAL) + '&base=USD&currencies=' + encodeURIComponent(codes);
-    console.log('[Metals][MP] URL', url);
+    const url = 'https://api.metalpriceapi.com/v1/latest'
+  + '?api_key=fda0bb2a0f5f5e9de80ad2096dd8f4de'
+  + '&base=USD'
+  + '&currencies=' + codes;  // e.g. "XAU,XAG"
+console.log('[Metals][MP] URL', url);
+
     try{
       const r = await fetch(url);
       if (!r.ok){ try { console.log('[Metals][MP] body', await r.text()); } catch(e){} return {}; }
