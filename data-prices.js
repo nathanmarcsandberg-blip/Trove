@@ -1,41 +1,106 @@
-// data-prices.js — prices via Twelve Data (equities) & CoinGecko (crypto)
+// data-prices.js — FORCE live update on load; equities via Twelve Data, crypto via CoinGecko
 (function(){
   const API = { TWELVE: localStorage.getItem('TROVE_API_TWELVE') || '7791647f5c1e478982a3dd702c82105b' };
   const LSK_UPDATED = 'trove_prices_last_updated_v1';
+
   function fmtTag(iso){ if(!iso)return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
-  function bySource(s){ return (window.FIXED_ASSETS||[]).filter(a=>a.source===s); }
 
-  async function fetchEquities(){
-    const syms = bySource('equity').map(a=>a.symbol); if(!syms.length) return;
-    const r = await fetch('https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms.join(','))+'&apikey='+API.TWELVE);
-    if(!r.ok) return; const j = await r.json();
-    const setOne=(sym,data)=>{ const row=(window.FIXED_ASSETS||[]).find(a=>a.symbol===sym); if(!row) return; const name=row.name; const price=parseFloat(data.close); const dy=(data.dividend_yield!=null)?String(data.dividend_yield):''; if(!isNaN(price)) window.ASSET_PRICES[name]=price; if(dy) window.ASSET_DIVIDENDS[name]=dy+'%'; };
-    if(j.symbol) setOne(j.symbol,j); else for(const [sym,data] of Object.entries(j)) setOne(sym,data);
+  // Mapping from name -> meta (source, symbol) comes from FIXED_ASSETS
+  const META_BY_NAME = Object.fromEntries((window.FIXED_ASSETS||[]).map(a=>[a.name, a]));
+
+  // ---- wipe any stale prices shown initially, then ask the page to re-render
+  (function wipeInitialDisplayedPrices(){
+    if (!Array.isArray(window.ASSET_LIST)) return;
+    let touched = false;
+    window.ASSET_LIST.forEach(r => {
+      if (typeof r.price === 'number' && r.price !== 0) { r.price = 0; touched = true; }
+      if (typeof r.yield === 'string' && r.yield) { r.yield = ''; touched = true; }
+    });
+    if (touched && typeof window.renderAssets === 'function') {
+      try { window.renderAssets(); } catch(e){ console.warn('[Pricing] render after wipe failed', e); }
+    }
+  })();
+
+  async function fetchEquitiesByTwelve(){
+    // collect symbols present on the page (from names that exist in meta)
+    const names = (window.ASSET_LIST||[]).map(r=>r.name).filter(n => META_BY_NAME[n]?.source === 'equity');
+    const symbols = names.map(n => META_BY_NAME[n].symbol);
+    if (!symbols.length) return {};
+    const url = 'https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(symbols.join(',')) + '&apikey=' + API.TWELVE;
+    console.log('[Equities] URL', url);
+    const r = await fetch(url);
+    if (!r.ok) {
+      console.warn('[Equities] HTTP', r.status, r.statusText);
+      return {};
+    }
+    const j = await r.json();
+    console.log('[Equities] JSON', j);
+    const out = {};
+    function applyOne(sym, data){
+      const name = names.find(n => META_BY_NAME[n].symbol === sym);
+      if (!name) return;
+      const p = parseFloat(data.close);
+      const y = (data.dividend_yield != null) ? String(data.dividend_yield) : '';
+      if (!Number.isNaN(p)) out[name] = Object.assign({ price: p }, y ? { yield: y + '%' } : {});
+    }
+    if (j.symbol) applyOne(j.symbol, j);
+    else for (const [sym, data] of Object.entries(j)) applyOne(sym, data);
+    return out;
   }
 
-  async function fetchCrypto(){
-    const idMap={}; const ids=[];
-    (window.FIXED_ASSETS||[]).filter(a=>a.source==='crypto').forEach(a=>{ const id=(a.symbol==='BTC')?'bitcoin':(a.symbol==='ETH'?'ethereum':null); if(id){ ids.push(id); idMap[id]=a.name; } });
-    if(!ids.length) return;
-    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids.join(',')+'&vs_currencies=usd');
-    if(!r.ok) return; const j = await r.json();
-    for(const [id,payload] of Object.entries(j)){ const name=idMap[id]; const p=payload&&payload.usd; if(typeof p==='number') window.ASSET_PRICES[name]=p; }
+  async function fetchCryptoByGecko(){
+    const names = (window.ASSET_LIST||[]).map(r=>r.name).filter(n => META_BY_NAME[n]?.source === 'crypto');
+    const idMap = {}; const ids = [];
+    names.forEach(n => {
+      const sym = META_BY_NAME[n].symbol;
+      const id = (sym === 'BTC') ? 'bitcoin' : (sym === 'ETH') ? 'ethereum' : null;
+      if (id){ ids.push(id); idMap[id] = n; }
+    });
+    if (!ids.length) return {};
+    const url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + ids.join(',') + '&vs_currencies=usd';
+    console.log('[Crypto] URL', url);
+    const r = await fetch(url);
+    if (!r.ok) { console.warn('[Crypto] HTTP', r.status, r.statusText); return {}; }
+    const j = await r.json();
+    console.log('[Crypto] JSON', j);
+    const out = {};
+    for (const [id, payload] of Object.entries(j)){
+      const name = idMap[id];
+      const p = payload && payload.usd;
+      if (typeof p === 'number') out[name] = { price: p };
+    }
+    return out;
   }
 
-  function apply(){
-    if(!Array.isArray(window.ASSET_LIST)) return;
-    window.ASSET_LIST = window.ASSET_LIST.map(row => ({
-      ...row,
-      price: (window.ASSET_PRICES[row.name]!=null)?window.ASSET_PRICES[row.name]:row.price,
-      yield: (window.ASSET_DIVIDENDS[row.name]!=null)?window.ASSET_DIVIDENDS[row.name]:row.yield
-    }));
-    localStorage.setItem(LSK_UPDATED, new Date().toISOString());
-    if(typeof window.renderAssets==='function'){ try{ window.renderAssets(); }catch(e){} }
-    const tag = document.getElementById('pricesUpdatedTag'); if(tag){ tag.textContent='Prices Last Updated: '+fmtTag(localStorage.getItem(LSK_UPDATED)); }
+  function mergeIntoAssetList(updates){
+    if (!Array.isArray(window.ASSET_LIST)) return;
+    let touched = false;
+    window.ASSET_LIST = window.ASSET_LIST.map(row => {
+      const u = updates[row.name];
+      if (!u) return row;
+      touched = true;
+      return Object.assign({}, row,
+        (typeof u.price === 'number') ? { price: u.price } : {},
+        (typeof u.yield === 'string') ? { yield: u.yield } : {}
+      );
+    });
+    if (touched) {
+      localStorage.setItem(LSK_UPDATED, new Date().toISOString());
+      const tagEl = document.getElementById('pricesUpdatedTag');
+      if (tagEl) tagEl.textContent = 'Prices Last Updated: ' + fmtTag(localStorage.getItem(LSK_UPDATED));
+      if (typeof window.renderAssets === 'function') { try { window.renderAssets(); } catch(e){} }
+    }
   }
 
-  async function refresh(){ await Promise.allSettled([fetchEquities(), fetchCrypto()]); apply(); }
+  async function refreshPrices(){
+    const [eqRes, crRes] = await Promise.all([ fetchEquitiesByTwelve(), fetchCryptoByGecko() ]);
+    const updates = Object.assign({}, eqRes || {}, crRes || {});
+    console.log('[Pricing] Updates', updates);
+    mergeIntoAssetList(updates);
+  }
 
-  window.TrovePricing = { refresh };
-  document.addEventListener('DOMContentLoaded', () => { refresh(); });
+  // Expose and autorun
+  window.TrovePricing = { refreshPrices };
+  document.addEventListener('DOMContentLoaded', () => { refreshPrices(); });
+
 })();
