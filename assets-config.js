@@ -1,4 +1,4 @@
-// assets-config.js
+// assets-config.js (no metals)
 window.ASSETS_DISPLAY = [
   // Dividend stocks
   { name: 'Apple Inc.',                      class: 'dividend_paying_stock',     source: 'equity', symbol: 'AAPL' },
