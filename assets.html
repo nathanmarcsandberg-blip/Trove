@@ -23,8 +23,7 @@
     </div>
     <div id="assetsList" class="grid"></div>
   </main>
-  <script src="assets-config.js" defer></script>
-  <script src="data-prices.js" defer></script>
+
   <script defer>
     document.addEventListener('DOMContentLoaded', () => {
       const listEl = document.getElementById('assetsList');
@@ -54,5 +53,8 @@
       window.TroveData.refreshPrices(false).catch(console.warn);
     });
   </script>
+  <script src="assets-config.js" defer></script>
+<script src="data-prices.js" defer></script>
+
 </body>
 </html>
