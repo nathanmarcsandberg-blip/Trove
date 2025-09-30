@@ -1,24 +1,24 @@
-// data-prices.js v200 — Metals via MetalPrice API only
+// data-prices.js — FORCE MetalPrice key & log full URL
 (function(){
-  console.log('[TroveData] data-prices.js loaded');
   const API = {
-    TWELVE: localStorage.getItem('TROVE_API_TWELVE') || '7791647f5c1e478982a3dd702c82105b',
-    METAL:  localStorage.getItem('TROVE_API_METAL')  || 'Fda0bb2a0f5f5e9de80ad2096dd8f4de'
+    TWELVE: '7791647f5c1e478982a3dd702c82105b',
+    // Force the user's full key; ignore bad localStorage overrides
+    METAL: (function(){
+      const FALLBACK = 'Fda0bb2a0f5f5e9de80ad2096dd8f4de';
+      const k = (localStorage.getItem('TROVE_API_METAL')||'').trim();
+      return (k && k.length >= 20) ? k : FALLBACK;
+    })()
   };
+
   const LSK_CACHE='trove_prices_cache_v1', LSK_UPDATED='trove_prices_last_updated_v1';
 
   function fmtTag(iso){ if(!iso)return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
   function getCache(){ try{ return JSON.parse(localStorage.getItem(LSK_CACHE)||'{}') }catch{ return {} } }
   function setCache(o){ localStorage.setItem(LSK_CACHE, JSON.stringify(o)) }
 
-  if (!Array.isArray(window.ASSETS_DISPLAY)) { console.error('[TroveData] ASSETS_DISPLAY missing'); window.ASSETS_DISPLAY=[]; }
+  const rows = (Array.isArray(window.ASSETS_DISPLAY)?window.ASSETS_DISPLAY:[]).map(a=>({ ...a, price:0, yield:'' }));
 
-  const rows = window.ASSETS_DISPLAY.map(a=>{
-    const seed=(window.ASSETS_SEED&&window.ASSETS_SEED[a.name])?window.ASSETS_SEED[a.name]:{price:0,yield:''};
-    return { name:a.name, class:a.class, source:a.source, symbol:a.symbol, price:(typeof seed.price==='number'?seed.price:0), yield:(typeof seed.yield==='string'?seed.yield:'') };
-  });
-
-  (function hydrate(){ const cache=getCache(); rows.forEach(r=>{ const hit=cache[r.name]; if(!hit) return; if(typeof hit.price==='number') r.price=hit.price; if(typeof hit.yield==='string') r.yield=hit.yield; }); })();
+  (function hydrate(){ const cache=getCache(); rows.forEach(r=>{ const hit=cache[r.name]; if(hit){ if(typeof hit.price==='number') r.price=hit.price; if(typeof hit.yield==='string') r.yield=hit.yield; } }); })();
 
   async function fetchCrypto(map){
     const out={}; const id=s=>s==='BTC'?'bitcoin':(s==='ETH'?'ethereum':null);
@@ -29,36 +29,37 @@
   }
 
   async function fetchEquities(map){
-    const syms=Object.values(map); if(!syms.length) return {};
+    const syms=Object.values(map); if(!syms.length)return{};
     const r=await fetch('https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms.join(','))+'&apikey='+API.TWELVE);
     if(!r.ok) return {};
     const j=await r.json(); const out={};
-    const toName = (sym)=>{ for(const [n,s] of Object.entries(map)) if(s===sym) return n; return sym; };
+    const toName=sym=>{ for(const [n,s] of Object.entries(map)) if(s===sym) return n; return sym; };
     if(j.symbol){ const p=parseFloat(j.close); const y=(j.dividend_yield!=null)?String(j.dividend_yield):''; const nm=toName(j.symbol); if(!isNaN(p)) out[nm]={price:p,yield:y?y+'%':''}; }
     else { for(const [sym,data] of Object.entries(j)){ const p=parseFloat(data.close); const y=(data.dividend_yield!=null)?String(data.dividend_yield):''; const nm=toName(sym); if(!isNaN(p)) out[nm]={price:p,yield:y?y+'%':''}; } }
     return out;
   }
 
   async function fetchMetals(map){
-    // EXACT call to MetalPrice API (USD base), invert to get USD per unit
     const codes = Array.from(new Set(Object.values(map))).join(',');
     if(!codes) return {};
-    const url = 'https://api.metalpriceapi.com/v1/latest?api_key='+API.METAL+'&base=USD&currencies='+codes;
-    console.log('[Metals][MP] URL', url);
+    const url = 'https://api.metalpriceapi.com/v1/latest?api_key='+encodeURIComponent(API.METAL)+'&base=USD&currencies='+encodeURIComponent(codes);
+    console.log('[Metals][MP] FULL URL', url);
     try{
       const r = await fetch(url);
+      console.log('[Metals][MP] status', r.status, r.statusText);
       if(!r.ok){ try{ console.log('[Metals][MP] body', await r.text()); }catch(e){}; return {}; }
       const j = await r.json();
+      console.log('[Metals][MP] JSON', j);
       const out = {};
       for(const [name, code] of Object.entries(map)){
         const rate = j && j.rates ? j.rates[code] : undefined; // XAU per USD
-        if(!rate) continue;
+        if(!rate){ console.warn('[Metals][MP] missing rate for', code); continue; }
         const usdPer = 1 / parseFloat(rate);
         if(!isNaN(usdPer)) out[name] = { price: usdPer };
       }
       return out;
     }catch(e){
-      console.error('[Metals][MP] error', e);
+      console.error('[Metals][MP] fetch error', e);
       return {};
     }
   }
@@ -73,6 +74,6 @@
   }
 
   const listeners=new Set(); function emit(){ listeners.forEach(fn=>{ try{ fn(); }catch(e){} }) } function onChange(fn){ listeners.add(fn) }
+
   window.TroveData = { getDisplayData:()=>rows.slice(), getLastUpdatedTag:()=>fmtTag(localStorage.getItem(LSK_UPDATED)), refreshPrices, onChange };
-  console.log('[TroveData] ready');
 })();

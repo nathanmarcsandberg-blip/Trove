@@ -5,25 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Assets – Trove</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .assets-wrap{max-width:960px;margin:40px auto;padding:0 16px}
-    .asset-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 18px}
-    .asset-search{flex:1;min-width:260px;padding:10px;border-radius:10px;border:1px solid #ddd}
-    .pill{padding:8px 12px;border:1px solid #0b57d0;color:#0b57d0;background:#fff;border-radius:999px;cursor:pointer}
-    .pill.active{background:#0b57d0;color:#fff}
-    .price-tag{opacity:.8}
-    .btn{padding:8px 12px;border-radius:10px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-    .card{border:1px solid #eee;border-radius:14px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:6px}
-    .name{font-weight:600}
-    .meta{font-size:.92rem;opacity:.9}
-    .yield{font-weight:600}
-  </style>
 </head>
 <body>
   <main class="assets-wrap">
     <h1 style="text-align:center;margin-bottom:18px">trove assets</h1>
-
     <div class="asset-toolbar">
       <input id="assetSearch" class="asset-search" placeholder="Search assets…"/>
       <button class="pill active" data-cat="all">All</button>
@@ -32,71 +17,36 @@
       <button class="pill" data-cat="cryptocurrency">Crypto</button>
       <button class="pill" data-cat="commodity">Commodity</button>
     </div>
-
     <div class="asset-toolbar" style="justify-content:flex-start">
       <span id="pricesUpdatedTag" class="price-tag">Prices Last Updated: —</span>
       <button id="updateRatesBtn" class="btn">Update Rates</button>
     </div>
-
     <div id="assetsList" class="grid"></div>
   </main>
-
-  <!-- Load config and data -->
-  <script src="assets-config.js?v=200" defer></script>
-  <script src="data-prices.js?v=200" defer></script>
-
+  <script src="assets-config.js" defer></script>
+  <script src="data-prices.js" defer></script>
   <script defer>
-    console.log('[Assets] inline script loaded');
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('[Assets] DOMContentLoaded');
-      const listEl   = document.getElementById('assetsList');
-      const tagEl    = document.getElementById('pricesUpdatedTag');
-      const btnEl    = document.getElementById('updateRatesBtn');
+      const listEl = document.getElementById('assetsList');
+      const tagEl  = document.getElementById('pricesUpdatedTag');
+      const btnEl  = document.getElementById('updateRatesBtn');
       const searchEl = document.getElementById('assetSearch');
-      const pills    = Array.from(document.querySelectorAll('.pill'));
-      let currentCat = 'all'; let q = '';
-
+      const pills = Array.from(document.querySelectorAll('.pill'));
+      let currentCat='all', q='';
       function render(){
-        const rows = (window.TroveData && typeof window.TroveData.getDisplayData==='function')
-          ? window.TroveData.getDisplayData() : [];
-        const filtered = rows.filter(r=>{
-          const catOk = currentCat==='all' ? true : r.class===currentCat;
-          const qOk = q ? r.name.toLowerCase().includes(q) : true;
-          return catOk && qOk;
-        });
+        const rows = window.TroveData?.getDisplayData?.() || [];
+        const filtered = rows.filter(r=> (currentCat==='all'||r.class===currentCat) && (!q || r.name.toLowerCase().includes(q)));
         listEl.innerHTML = filtered.map(r=>{
-          const priceStr = isFinite(r.price) ? ('$' + (+r.price).toFixed(2)) : '—';
+          const priceStr = isFinite(r.price) ? ('$'+(+r.price).toFixed(2)) : '—';
           const y = (r.yield && r.yield!=='0' && r.yield!=='0%') ? (' • <span class="yield">'+r.yield+'</span>') : '';
-          return '<div class="card">'
-            + '<div class="name">'+r.name+'</div>'
-            + '<div class="meta">'+priceStr+y+'</div>'
-            + '<div style="font-size:.85rem;opacity:.7">'+r.class.replaceAll('_',' ')+'</div>'
-            + '</div>';
+          return `<div class="card"><div class="name">${r.name}</div><div class="meta">${priceStr}${y}</div><div style="font-size:.85rem;opacity:.7">${r.class.replaceAll('_',' ')}</div></div>`;
         }).join('');
       }
-
-      searchEl.addEventListener('input', e=>{ q = e.target.value.trim().toLowerCase(); render(); });
-      pills.forEach(p=>{ p.addEventListener('click', ()=>{ pills.forEach(x=>x.classList.remove('active')); p.classList.add('active'); currentCat = p.dataset.cat; render(); }); });
-
-      if (window.TroveData) {
-        window.TroveData.onChange(() => {
-          tagEl.textContent = 'Prices Last Updated: ' + window.TroveData.getLastUpdatedTag();
-          render();
-        });
-      } else {
-        console.warn('[Assets] TroveData not present yet');
-      }
-
-      tagEl.textContent = 'Prices Last Updated: ' + (window.TroveData?.getLastUpdatedTag?.() || '—');
-      render();
-
-      btnEl.addEventListener('click', async ()=>{
-        btnEl.disabled = true; const prev = btnEl.textContent; btnEl.textContent = 'Updating…';
-        try { await window.TroveData.refreshPrices(true); }
-        catch(e){ console.error(e); alert('Update failed'); }
-        finally { btnEl.disabled = false; btnEl.textContent = prev; }
-      });
-
+      searchEl.addEventListener('input', e=>{ q=e.target.value.trim().toLowerCase(); render(); });
+      pills.forEach(p=>p.addEventListener('click', ()=>{ pills.forEach(x=>x.classList.remove('active')); p.classList.add('active'); currentCat=p.dataset.cat; render(); }));
+      window.TroveData?.onChange(()=>{ tagEl.textContent='Prices Last Updated: '+window.TroveData.getLastUpdatedTag(); render(); });
+      tagEl.textContent='Prices Last Updated: '+(window.TroveData?.getLastUpdatedTag?.()||'—'); render();
+      btnEl.addEventListener('click', async ()=>{ btnEl.disabled=true; const prev=btnEl.textContent; btnEl.textContent='Updating…'; try{ await window.TroveData.refreshPrices(true);}catch(e){console.error(e);}finally{btnEl.disabled=false; btnEl.textContent=prev;} });
       window.TroveData?.refreshPrices(false).catch(console.warn);
     });
   </script>
