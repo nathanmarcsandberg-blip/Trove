@@ -126,39 +126,30 @@
   }
 
   
-async function fetchMetals(map) {
-  // Metals via MetalPrice API only
-  console.log('[Metals] Start [MetalPrice API]', map);
 
+async function fetchMetals(map) {
+  // Metals via MetalPrice API only (no Twelve Data)
+  console.log('[Metals] Start [MetalPrice API only]', map);
   const codes = [...new Set(Object.values(map))].join(',');
   if (!codes) return {};
-
   const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API.METAL}&base=USD&currencies=${codes}`;
   console.log('[Metals][MP] URL:', url);
-
   try {
     const r = await fetch(url);
     console.log('[Metals][MP] status:', r.status, r.statusText);
-
     if (!r.ok) {
       try { console.log('[Metals][MP] body:', await r.text()); } catch {}
       return {};
     }
-
     const j = await r.json();
     console.log('[Metals][MP] JSON:', j);
-
     const out = {};
     for (const [name, code] of Object.entries(map)) {
       const rate = j?.rates?.[code];
-      if (!rate) {
-        console.warn('[Metals][MP] Missing rate for', code);
-        continue;
-      }
-      const usdPerUnit = 1 / parseFloat(rate); // invert to USD per XAU/XAG
+      if (!rate) { console.warn('[Metals][MP] Missing rate for', code); continue; }
+      const usdPerUnit = 1 / parseFloat(rate); // USD per metal unit
       if (!isNaN(usdPerUnit)) out[name] = { price: usdPerUnit };
     }
-
     console.log('[Metals] Parsed:', out);
     return out;
   } catch (e) {
