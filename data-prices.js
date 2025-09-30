@@ -127,30 +127,44 @@
 
   
 async function fetchMetals(map) {
-  // Metals via Twelve Data quotes (e.g., XAU/USD, XAG/USD). No other provider.
-  console.log('[Metals] Start [Twelve Data only]', map);
-  const pairsByName = Object.fromEntries(Object.entries(map).map(([n, code]) => [n, `${code}/USD`]));
-  const pairList = [...new Set(Object.values(pairsByName))].join(',');
-  if (!pairList) return {};
-  const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(pairList)}&apikey=${API.TWELVE}`;
-  console.log('[Metals][TD] URL:', url);
-  const r = await fetch(url);
-  console.log('[Metals][TD] status:', r.status, r.statusText);
-  if (!r.ok) { try { console.log('[Metals][TD] body:', await r.text()); } catch{} return {}; }
-  const j = await r.json();
-  console.log('[Metals][TD] JSON:', j);
-  const out = {};
-  const byName = (pair) => Object.entries(pairsByName).find(([, p]) => p === pair)?.[0] || pair;
-  if (j.symbol) {
-    const p = parseFloat(j.close); const nm = byName(j.symbol);
-    if (!isNaN(p)) out[nm] = { price: p };
-  } else {
-    for (const [pair, data] of Object.entries(j)) {
-      const p = parseFloat(data.close); const nm = byName(pair);
-      if (!isNaN(p)) out[nm] = { price: p };
+  // Metals via MetalPrice API only
+  console.log('[Metals] Start [MetalPrice API]', map);
+
+  const codes = [...new Set(Object.values(map))].join(',');
+  if (!codes) return {};
+
+  const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API.METAL}&base=USD&currencies=${codes}`;
+  console.log('[Metals][MP] URL:', url);
+
+  try {
+    const r = await fetch(url);
+    console.log('[Metals][MP] status:', r.status, r.statusText);
+
+    if (!r.ok) {
+      try { console.log('[Metals][MP] body:', await r.text()); } catch {}
+      return {};
     }
+
+    const j = await r.json();
+    console.log('[Metals][MP] JSON:', j);
+
+    const out = {};
+    for (const [name, code] of Object.entries(map)) {
+      const rate = j?.rates?.[code];
+      if (!rate) {
+        console.warn('[Metals][MP] Missing rate for', code);
+        continue;
+      }
+      const usdPerUnit = 1 / parseFloat(rate); // invert to USD per XAU/XAG
+      if (!isNaN(usdPerUnit)) out[name] = { price: usdPerUnit };
+    }
+
+    console.log('[Metals] Parsed:', out);
+    return out;
+  } catch (e) {
+    console.error('[Metals][MP] error:', e);
+    return {};
   }
-  console.log('[Metals] Parsed:', out);
-  return out;
 }
+
 )();
