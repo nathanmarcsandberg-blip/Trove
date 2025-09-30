@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Assets – Trove</title>
-  <link href="style.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    /* tiny defaults so this works anywhere */
     .assets-wrap{max-width:960px;margin:40px auto;padding:0 16px}
     .asset-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 18px}
     .asset-search{flex:1;min-width:260px;padding:10px;border-radius:10px;border:1px solid #ddd}
@@ -42,16 +41,18 @@
     <div id="assetsList" class="grid"></div>
   </main>
 
-  <!-- 2) Display list (what to show + categories) -->
-  <script src="assets-config.js"></script>
-  <!-- 3) Data layer (fetch + cache once/day) -->
-  <script src="data-prices.js"></script>
-  <!-- 4) Minimal UI wiring that renders cards -->
-  <script>
-    (function(){
+  <!-- ORDER MATTERS: config -> data layer -> page wiring -->
+  <script src="assets-config.js?v=104" defer></script>
+  <script src="data-prices.js?v=104" defer></script>
+  <script defer>
+    console.log('[Assets] inline script loaded');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('[Assets] DOMContentLoaded');
+
       const listEl = document.getElementById('assetsList');
-      const tagEl = document.getElementById('pricesUpdatedTag');
-      const btnEl = document.getElementById('updateRatesBtn');
+      const tagEl  = document.getElementById('pricesUpdatedTag');
+      const btnEl  = document.getElementById('updateRatesBtn');
       const searchEl = document.getElementById('assetSearch');
       const pills = Array.from(document.querySelectorAll('.pill'));
 
@@ -59,12 +60,13 @@
       let q = '';
 
       function render(){
-        const rows = window.TroveData.getDisplayData();
+        const rows = window.TroveData?.getDisplayData?.() || [];
         const filtered = rows.filter(r=>{
           const catOk = currentCat==='all' ? true : r.class===currentCat;
           const qOk = q ? r.name.toLowerCase().includes(q) : true;
           return catOk && qOk;
         });
+        console.log('[Assets] render', {currentCat, q, count: filtered.length});
         listEl.innerHTML = filtered.map(r=>{
           const priceStr = isFinite(r.price) ? `$${(+r.price).toFixed(2)}` : '—';
           const y = (r.yield && r.yield!=='0' && r.yield!=='0%') ? ` • <span class="yield">${r.yield}</span>` : '';
@@ -76,7 +78,6 @@
         }).join('');
       }
 
-      // init UI
       searchEl.addEventListener('input', e=>{ q = e.target.value.trim().toLowerCase(); render(); });
       pills.forEach(p=>{
         p.addEventListener('click', ()=>{
@@ -87,26 +88,33 @@
         });
       });
 
-      // wire data layer events
-      window.TroveData.onChange(() => {
-        tagEl.textContent = 'Prices Last Updated: ' + window.TroveData.getLastUpdatedTag();
-        render();
-      });
+      // Data events
+      if (window.TroveData) {
+        window.TroveData.onChange(() => {
+          const tag = window.TroveData.getLastUpdatedTag();
+          console.log('[Assets] onChange fired; tag=', tag);
+          tagEl.textContent = 'Prices Last Updated: ' + tag;
+          render();
+        });
+      } else {
+        console.warn('[Assets] TroveData not present');
+      }
 
-      // initial paint: cache first
+      // First paint
+      tagEl.textContent = 'Prices Last Updated: ' + (window.TroveData?.getLastUpdatedTag?.() || '—');
       render();
-      tagEl.textContent = 'Prices Last Updated: ' + window.TroveData.getLastUpdatedTag();
 
       btnEl.addEventListener('click', async ()=>{
+        console.log('[Assets] Update Rates clicked');
         btnEl.disabled = true; const prev = btnEl.textContent; btnEl.textContent = 'Updating…';
         try { await window.TroveData.refreshPrices(true); }
-        catch(e){ console.error(e); alert('Update failed (see console).'); }
+        catch(e){ console.error('[Assets] manual refresh failed', e); alert('Update failed (see console).'); }
         finally { btnEl.disabled = false; btnEl.textContent = prev; }
       });
 
-      // auto once/day (no-op if already updated today)
-      window.TroveData.refreshPrices(false).catch(console.warn);
-    })();
+      // Auto (no-op if already today)
+      window.TroveData.refreshPrices(false).catch(e=>console.warn('[Assets] auto refresh fail', e));
+    });
   </script>
 </body>
 </html>
