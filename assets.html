@@ -23,7 +23,6 @@
 <body>
   <main class="assets-wrap">
     <h1 style="text-align:center;margin-bottom:18px">trove assets</h1>
-
     <div class="asset-toolbar">
       <input id="assetSearch" class="asset-search" placeholder="Search assets…"/>
       <button class="pill active" data-cat="all">All</button>
@@ -32,35 +31,26 @@
       <button class="pill" data-cat="cryptocurrency">Crypto</button>
       <button class="pill" data-cat="commodity">Commodity</button>
     </div>
-
     <div class="asset-toolbar" style="justify-content:flex-start">
       <span id="pricesUpdatedTag" class="price-tag">Prices Last Updated: —</span>
       <button id="updateRatesBtn" class="btn">Update Rates</button>
     </div>
-
     <div id="assetsList" class="grid"></div>
   </main>
-
-  <!-- ORDER MATTERS: config -> data layer -> page wiring -->
-  <script src="assets-config.js?v=104" defer></script>
-  <script src="data-prices.js?v=104" defer></script>
+  <script src="assets-config.js" defer></script>
+  <script src="data-prices.js" defer></script>
   <script defer>
     console.log('[Assets] inline script loaded');
-
     document.addEventListener('DOMContentLoaded', () => {
       console.log('[Assets] DOMContentLoaded');
-
-      const listEl = document.getElementById('assetsList');
-      const tagEl  = document.getElementById('pricesUpdatedTag');
-      const btnEl  = document.getElementById('updateRatesBtn');
+      const listEl   = document.getElementById('assetsList');
+      const tagEl    = document.getElementById('pricesUpdatedTag');
+      const btnEl    = document.getElementById('updateRatesBtn');
       const searchEl = document.getElementById('assetSearch');
-      const pills = Array.from(document.querySelectorAll('.pill'));
-
-      let currentCat = 'all';
-      let q = '';
-
+      const pills    = Array.from(document.querySelectorAll('.pill'));
+      let currentCat = 'all'; let q = '';
       function render(){
-        const rows = window.TroveData?.getDisplayData?.() || [];
+        const rows = (window.TroveData && typeof window.TroveData.getDisplayData==='function') ? window.TroveData.getDisplayData() : [];
         const filtered = rows.filter(r=>{
           const catOk = currentCat==='all' ? true : r.class===currentCat;
           const qOk = q ? r.name.toLowerCase().includes(q) : true;
@@ -70,50 +60,16 @@
         listEl.innerHTML = filtered.map(r=>{
           const priceStr = isFinite(r.price) ? `$${(+r.price).toFixed(2)}` : '—';
           const y = (r.yield && r.yield!=='0' && r.yield!=='0%') ? ` • <span class="yield">${r.yield}</span>` : '';
-          return `<div class="card">
-            <div class="name">${r.name}</div>
-            <div class="meta">${priceStr}${y}</div>
-            <div style="font-size:.85rem;opacity:.7">${r.class.replaceAll('_',' ')}</div>
-          </div>`;
+          return `<div class="card"><div class="name">${r.name}</div><div class="meta">${priceStr}${y}</div><div style="font-size:.85rem;opacity:.7">${r.class.replaceAll('_',' ')}</div></div>`;
         }).join('');
       }
-
       searchEl.addEventListener('input', e=>{ q = e.target.value.trim().toLowerCase(); render(); });
-      pills.forEach(p=>{
-        p.addEventListener('click', ()=>{
-          pills.forEach(x=>x.classList.remove('active'));
-          p.classList.add('active');
-          currentCat = p.dataset.cat;
-          render();
-        });
-      });
-
-      // Data events
-      if (window.TroveData) {
-        window.TroveData.onChange(() => {
-          const tag = window.TroveData.getLastUpdatedTag();
-          console.log('[Assets] onChange fired; tag=', tag);
-          tagEl.textContent = 'Prices Last Updated: ' + tag;
-          render();
-        });
-      } else {
-        console.warn('[Assets] TroveData not present');
-      }
-
-      // First paint
-      tagEl.textContent = 'Prices Last Updated: ' + (window.TroveData?.getLastUpdatedTag?.() || '—');
-      render();
-
-      btnEl.addEventListener('click', async ()=>{
-        console.log('[Assets] Update Rates clicked');
-        btnEl.disabled = true; const prev = btnEl.textContent; btnEl.textContent = 'Updating…';
-        try { await window.TroveData.refreshPrices(true); }
-        catch(e){ console.error('[Assets] manual refresh failed', e); alert('Update failed (see console).'); }
-        finally { btnEl.disabled = false; btnEl.textContent = prev; }
-      });
-
-      // Auto (no-op if already today)
-      window.TroveData.refreshPrices(false).catch(e=>console.warn('[Assets] auto refresh fail', e));
+      pills.forEach(p=>{ p.addEventListener('click', ()=>{ pills.forEach(x=>x.classList.remove('active')); p.classList.add('active'); currentCat = p.dataset.cat; render(); }); });
+      if (!window.TroveData) { console.warn('[Assets] TroveData not present'); }
+      else { window.TroveData.onChange(() => { const tag = window.TroveData.getLastUpdatedTag(); console.log('[Assets] onChange fired; tag=', tag); tagEl.textContent = 'Prices Last Updated: ' + tag; render(); }); }
+      tagEl.textContent = 'Prices Last Updated: ' + (window.TroveData?.getLastUpdatedTag?.() || '—'); render();
+      btnEl.addEventListener('click', async ()=>{ console.log('[Assets] Update Rates clicked'); btnEl.disabled = true; const prev = btnEl.textContent; btnEl.textContent = 'Updating…'; try { if (!window.TroveData) throw new Error('TroveData missing'); await window.TroveData.refreshPrices(true); } catch(e){ console.error('[Assets] manual refresh failed', e); alert('Update failed (see console).'); } finally { btnEl.disabled = false; btnEl.textContent = prev; } });
+      window.TroveData?.refreshPrices(false).catch(e=>console.warn('[Assets] auto refresh fail', e));
     });
   </script>
 </body>
