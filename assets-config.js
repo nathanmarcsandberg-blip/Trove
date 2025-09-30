@@ -1,17 +1,16 @@
-// assets-config.js (no metals)
-window.ASSETS_DISPLAY = [
-  // Dividend stocks
-  { name: 'Apple Inc.',                      class: 'dividend_paying_stock',     source: 'equity', symbol: 'AAPL' },
-  { name: 'Microsoft Corporation',           class: 'dividend_paying_stock',     source: 'equity', symbol: 'MSFT' },
-  { name: 'Johnson & Johnson',               class: 'dividend_paying_stock',     source: 'equity', symbol: 'JNJ' },
-  { name: 'The Procter & Gamble Company',    class: 'dividend_paying_stock',     source: 'equity', symbol: 'PG' },
-  { name: 'The Coca-Cola Company',           class: 'dividend_paying_stock',     source: 'equity', symbol: 'KO' },
-  { name: 'PepsiCo, Inc.',                   class: 'dividend_paying_stock',     source: 'equity', symbol: 'PEP' },
-  // Non-dividend growth
-  { name: 'NVIDIA Corporation',              class: 'non_dividend_paying_stock', source: 'equity', symbol: 'NVDA' },
-  { name: 'Amazon.com, Inc.',                class: 'non_dividend_paying_stock', source: 'equity', symbol: 'AMZN' },
-  // Crypto
-  { name: 'Bitcoin',                         class: 'cryptocurrency',            source: 'crypto', symbol: 'BTC' },
-  { name: 'Ethereum',                        class: 'cryptocurrency',            source: 'crypto', symbol: 'ETH' }
+// assets-config.js — FIXED_ASSETS (no commodities)
+window.FIXED_ASSETS = [
+  { name: 'Apple Inc.',                      source: 'equity', class: 'dividend_paying_stock',     symbol: 'AAPL' },
+  { name: 'Microsoft Corporation',           source: 'equity', class: 'dividend_paying_stock',     symbol: 'MSFT' },
+  { name: 'Johnson & Johnson',               source: 'equity', class: 'dividend_paying_stock',     symbol: 'JNJ' },
+  { name: 'The Procter & Gamble Company',    source: 'equity', class: 'dividend_paying_stock',     symbol: 'PG'   },
+  { name: 'The Coca-Cola Company',           source: 'equity', class: 'dividend_paying_stock',     symbol: 'KO'   },
+  { name: 'PepsiCo, Inc.',                   source: 'equity', class: 'dividend_paying_stock',     symbol: 'PEP'  },
+  { name: 'NVIDIA Corporation',              source: 'equity', class: 'non_dividend_paying_stock', symbol: 'NVDA' },
+  { name: 'Amazon.com, Inc.',                source: 'equity', class: 'non_dividend_paying_stock', symbol: 'AMZN' },
+  { name: 'Bitcoin',                         source: 'crypto', class: 'cryptocurrency',            symbol: 'BTC'  },
+  { name: 'Ethereum',                        source: 'crypto', class: 'cryptocurrency',            symbol: 'ETH'  }
 ];
-window.ASSETS_SEED = Object.fromEntries(window.ASSETS_DISPLAY.map(a=>[a.name,{price:0,yield:''}]));
+window.ASSET_LIST = (window.ASSET_LIST && Array.isArray(window.ASSET_LIST)) ? window.ASSET_LIST :
+  window.FIXED_ASSETS.map(a => ({ name: a.name, class: a.class, price: 0, yield: '' }));
+window.ASSET_PRICES = {}; window.ASSET_DIVIDENDS = {};

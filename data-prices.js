@@ -1,49 +1,41 @@
-// data-prices.js (no metals) — leaves your HTML/CSS untouched
+// data-prices.js — prices via Twelve Data (equities) & CoinGecko (crypto)
 (function(){
   const API = { TWELVE: localStorage.getItem('TROVE_API_TWELVE') || '7791647f5c1e478982a3dd702c82105b' };
-  const LSK_CACHE='trove_prices_cache_v1', LSK_UPDATED='trove_prices_last_updated_v1';
+  const LSK_UPDATED = 'trove_prices_last_updated_v1';
+  function fmtTag(iso){ if(!iso)return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
+  function bySource(s){ return (window.FIXED_ASSETS||[]).filter(a=>a.source===s); }
 
-  function fmtTag(iso){ if(!iso)return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
-  function getCache(){ try{ return JSON.parse(localStorage.getItem(LSK_CACHE)||'{}') }catch{ return {} } }
-  function setCache(o){ localStorage.setItem(LSK_CACHE, JSON.stringify(o)) }
-
-  if (!Array.isArray(window.ASSETS_DISPLAY)) { console.error('[TroveData] ASSETS_DISPLAY missing'); window.ASSETS_DISPLAY=[]; }
-
-  const rows = window.ASSETS_DISPLAY.map(a=>{
-    const seed=(window.ASSETS_SEED&&window.ASSETS_SEED[a.name])?window.ASSETS_SEED[a.name]:{price:0,yield:''};
-    return { name:a.name, class:a.class, source:a.source, symbol:a.symbol, price:(typeof seed.price==='number'?seed.price:0), yield:(typeof seed.yield==='string'?seed.yield:'') };
-  });
-
-  (function hydrate(){ const cache=getCache(); rows.forEach(r=>{ const hit=cache[r.name]; if(!hit) return; if(typeof hit.price==='number') r.price=hit.price; if(typeof hit.yield==='string') r.yield=hit.yield; }); })();
-
-  async function fetchCrypto(map){
-    const out={}; const id=s=>s==='BTC'?'bitcoin':(s==='ETH'?'ethereum':null);
-    const ids=Object.values(map).map(id).filter(Boolean);
-    if(ids.length){ try{ const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids.join(',')+'&vs_currencies=usd'); const j=await r.json(); for(const [name,sym] of Object.entries(map)){ const gid=id(sym); const p=gid&&j[gid]?j[gid].usd:undefined; if(typeof p==='number') out[name]={price:p}; } }catch(e){} }
-    for(const [name,sym] of Object.entries(map)){ if(out[name]) continue; try{ const r=await fetch('https://api.exchange.coinbase.com/products/'+sym+'-USD/ticker'); const j=await r.json(); const p=parseFloat(j.price); if(!isNaN(p)) out[name]={price:p}; }catch(e){} }
-    return out;
+  async function fetchEquities(){
+    const syms = bySource('equity').map(a=>a.symbol); if(!syms.length) return;
+    const r = await fetch('https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms.join(','))+'&apikey='+API.TWELVE);
+    if(!r.ok) return; const j = await r.json();
+    const setOne=(sym,data)=>{ const row=(window.FIXED_ASSETS||[]).find(a=>a.symbol===sym); if(!row) return; const name=row.name; const price=parseFloat(data.close); const dy=(data.dividend_yield!=null)?String(data.dividend_yield):''; if(!isNaN(price)) window.ASSET_PRICES[name]=price; if(dy) window.ASSET_DIVIDENDS[name]=dy+'%'; };
+    if(j.symbol) setOne(j.symbol,j); else for(const [sym,data] of Object.entries(j)) setOne(sym,data);
   }
 
-  async function fetchEquities(map){
-    const syms=Object.values(map); if(!syms.length)return{};
-    const r=await fetch('https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms.join(','))+'&apikey='+API.TWELVE);
-    if(!r.ok) return {};
-    const j=await r.json(); const out={};
-    const toName=sym=>{ for(const [n,s] of Object.entries(map)) if(s===sym) return n; return sym; };
-    if(j.symbol){ const p=parseFloat(j.close); const y=(j.dividend_yield!=null)?String(j.dividend_yield):''; const nm=toName(j.symbol); if(!isNaN(p)) out[nm]={price:p,yield:y?y+'%':''}; }
-    else { for(const [sym,data] of Object.entries(j)){ const p=parseFloat(data.close); const y=(data.dividend_yield!=null)?String(data.dividend_yield):''; const nm=toName(sym); if(!isNaN(p)) out[nm]={price:p,yield:y?y+'%':''}; } }
-    return out;
+  async function fetchCrypto(){
+    const idMap={}; const ids=[];
+    (window.FIXED_ASSETS||[]).filter(a=>a.source==='crypto').forEach(a=>{ const id=(a.symbol==='BTC')?'bitcoin':(a.symbol==='ETH'?'ethereum':null); if(id){ ids.push(id); idMap[id]=a.name; } });
+    if(!ids.length) return;
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids.join(',')+'&vs_currencies=usd');
+    if(!r.ok) return; const j = await r.json();
+    for(const [id,payload] of Object.entries(j)){ const name=idMap[id]; const p=payload&&payload.usd; if(typeof p==='number') window.ASSET_PRICES[name]=p; }
   }
 
-  async function refreshPrices(force){
-    const mapCrypto={}, mapEquity={};
-    rows.forEach(r=>{ if(r.source==='crypto') mapCrypto[r.name]=r.symbol; else if(r.source==='equity') mapEquity[r.name]=r.symbol; });
-    const results=await Promise.allSettled([ fetchCrypto(mapCrypto), fetchEquities(mapEquity) ]);
-    const nowIso=new Date().toISOString(); const cache=getCache();
-    results.forEach(res=>{ if(res.status!=='fulfilled'||!res.value) return; for(const [name,v] of Object.entries(res.value)){ const row=rows.find(x=>x.name===name); if(!row) continue; if(typeof v.price==='number') row.price=v.price; if(typeof v.yield==='string') row.yield=v.yield; cache[name]=Object.assign({},cache[name]||{},v,{ts:nowIso}); } });
-    setCache(cache); localStorage.setItem(LSK_UPDATED, nowIso); emit(); return {skipped:false};
+  function apply(){
+    if(!Array.isArray(window.ASSET_LIST)) return;
+    window.ASSET_LIST = window.ASSET_LIST.map(row => ({
+      ...row,
+      price: (window.ASSET_PRICES[row.name]!=null)?window.ASSET_PRICES[row.name]:row.price,
+      yield: (window.ASSET_DIVIDENDS[row.name]!=null)?window.ASSET_DIVIDENDS[row.name]:row.yield
+    }));
+    localStorage.setItem(LSK_UPDATED, new Date().toISOString());
+    if(typeof window.renderAssets==='function'){ try{ window.renderAssets(); }catch(e){} }
+    const tag = document.getElementById('pricesUpdatedTag'); if(tag){ tag.textContent='Prices Last Updated: '+fmtTag(localStorage.getItem(LSK_UPDATED)); }
   }
 
-  const listeners=new Set(); function emit(){ listeners.forEach(fn=>{ try{ fn(); }catch(e){} }) } function onChange(fn){ listeners.add(fn) }
-  window.TroveData={ getDisplayData:()=>rows.slice(), getLastUpdatedTag:()=>fmtTag(localStorage.getItem(LSK_UPDATED)), refreshPrices, onChange };
+  async function refresh(){ await Promise.allSettled([fetchEquities(), fetchCrypto()]); apply(); }
+
+  window.TrovePricing = { refresh };
+  document.addEventListener('DOMContentLoaded', () => { refresh(); });
 })();
