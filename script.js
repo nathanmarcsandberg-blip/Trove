@@ -1033,5 +1033,4 @@ document.addEventListener('DOMContentLoaded', () => {
       // redirect to home page
       window.location.href = 'index.html';
     });
-  }
 });
