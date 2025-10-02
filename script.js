@@ -1,17 +1,8 @@
 /*
- * Trove – Client‑side proof‑of‑concept authentication and sign‑up flow.
+ * Trove – Client-side proof-of-concept authentication and sign-up flow.
+ * (Patched to read LIVE assets from window.ASSET_LIST populated by data-prices.js)
  *
- * This script manages:
- *  - Persisting new users created via the multi‑step signup form.
- *  - Signing users in using the login page and switching the nav button to
- *    reflect the session state.
- *  - Confirmation on logout.
- *  - Optional fallback to a read‑only CSV file in the repo (users.csv)
- *    for demonstration logins.
- *
- * WARNING: This implementation stores passwords in localStorage and
- * optionally exposes them via a CSV file. It is only suitable for demo
- * purposes on a static site. Do not use this in production.
+ * WARNING: Demo-only implementation. Not for production use.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -56,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- Update hero call‑to‑action based on session ----------
+  // ---------- Update hero call-to-action based on session ----------
   (function updateHeroCta() {
     const heroBtn = document.querySelector('.hero .primary-btn');
     if (heroBtn) {
@@ -70,6 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   })();
+
+  // ---------- LIVE ASSET helpers (replaces hard-coded ASSET_LIST) ----------
+  function liveAssets() {
+    return Array.isArray(window.ASSET_LIST) ? window.ASSET_LIST : [];
+  }
+  function liveAssetByName(name) {
+    return liveAssets().find((a) => a.name === name);
+  }
+  function livePrice(name, fallback = 0) {
+    const a = liveAssetByName(name);
+    const p = a ? Number(a.price) : NaN;
+    return Number.isFinite(p) ? p : fallback;
+  }
 
   // ---------- Portfolio sticky bar update ----------
   function updatePortfolioBar() {
@@ -86,15 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let portfolioValue = 0;
     if (Array.isArray(user.positions)) {
       user.positions.forEach((pos) => {
-        const asset = ASSET_LIST.find((a) => a.name === pos.name);
-        const price = asset ? asset.price : pos.purchasePrice;
+        const price = livePrice(pos.name, pos.purchasePrice);
         portfolioValue += pos.quantity * price;
       });
     }
     // available balance from user record
     const available = typeof user.balance === 'number' ? user.balance : 0;
     // compute account value as available balance plus portfolio value
-    const accountValue = (available + portfolioValue);
+    const accountValue = available + portfolioValue;
     const portfolioStr = portfolioValue.toFixed(2);
     const availableStr = available.toFixed(2);
     const accountStr = accountValue.toFixed(2);
@@ -150,8 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalValue = 0;
     if (Array.isArray(user.positions)) {
       user.positions.forEach((pos) => {
-        const asset = ASSET_LIST.find((a) => a.name === pos.name);
-        const price = asset ? asset.price : pos.purchasePrice;
+        const price = livePrice(pos.name, pos.purchasePrice);
         totalValue += pos.quantity * price;
       });
     }
@@ -234,96 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- Dataset of available assets ----------
-  const ASSET_LIST = [
-    { name: 'Apple Inc.', class: 'dividend_paying_stock', yield: '0.46%', price: 227.76 },
-    { name: 'Microsoft Corporation', class: 'dividend_paying_stock', yield: '0.65%', price: 507.23 },
-    { name: 'Johnson & Johnson', class: 'dividend_paying_stock', yield: '2.90%', price: 179.29 },
-    { name: 'The Procter & Gamble Company', class: 'dividend_paying_stock', yield: '2.66%', price: 158.67 },
-    { name: 'The Coca-Cola Company', class: 'dividend_paying_stock', yield: '2.91%', price: 70.13 },
-    { name: 'PepsiCo, Inc.', class: 'dividend_paying_stock', yield: '3.80%', price: 149.64 },
-    { name: "McDonald's Corporation", class: 'dividend_paying_stock', yield: '2.25%', price: 314.07 },
-    { name: 'Walmart Inc.', class: 'dividend_paying_stock', yield: '0.97%', price: 96.83 },
-    { name: 'Verizon Communications Inc.', class: 'dividend_paying_stock', yield: '6.10%', price: 44.44 },
-    { name: 'AT&T Inc.', class: 'dividend_paying_stock', yield: '3.86%', price: 28.77 },
-    { name: 'International Business Machines Corporation', class: 'dividend_paying_stock', yield: '2.78%', price: 242.09 },
-    { name: 'Cisco Systems, Inc.', class: 'dividend_paying_stock', yield: '2.44%', price: 67.32 },
-    { name: 'Intel Corporation', class: 'non_dividend_paying_stock', yield: '', price: 24.8 },
-    { name: 'Exxon Mobil Corporation', class: 'dividend_paying_stock', yield: '3.56%', price: 111.28 },
-    { name: 'Chevron Corporation', class: 'dividend_paying_stock', yield: '4.32%', price: 158.18 },
-    { name: 'Pfizer Inc.', class: 'dividend_paying_stock', yield: '6.65%', price: 25.88 },
-    { name: 'Merck & Co., Inc.', class: 'dividend_paying_stock', yield: '3.71%', price: 87.37 },
-    { name: 'AbbVie Inc.', class: 'dividend_paying_stock', yield: '3.11%', price: 210.6 },
-    { name: 'Eli Lilly and Company', class: 'dividend_paying_stock', yield: '0.84%', price: 711.68 },
-    { name: 'The Home Depot, Inc.', class: 'dividend_paying_stock', yield: '2.23%', price: 412.79 },
-    { name: "Lowe's Companies, Inc.", class: 'dividend_paying_stock', yield: '1.82%', price: 263.73 },
-    { name: 'Starbucks Corporation', class: 'dividend_paying_stock', yield: '2.76%', price: 88.38 },
-    { name: 'NIKE, Inc.', class: 'dividend_paying_stock', yield: '2.04%', price: 78.38 },
-    { name: 'The Walt Disney Company', class: 'dividend_paying_stock', yield: '0.84%', price: 118.86 },
-    { name: 'Oracle Corporation', class: 'dividend_paying_stock', yield: '0.85%', price: 236.37 },
-    { name: 'Amazon.com, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 228.84 },
-    { name: 'Tesla, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 340.01 },
-    { name: 'Alphabet Inc.', class: 'dividend_paying_stock', yield: '0.41%', price: 206.72 },
-    { name: 'Meta Platforms, Inc.', class: 'dividend_paying_stock', yield: '0.28%', price: 754.79 },
-    { name: 'Netflix, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 1204.65 },
-    { name: 'Uber Technologies, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 96.79 },
-    { name: 'Shopify Inc.', class: 'non_dividend_paying_stock', yield: '', price: 142.11 },
-    { name: 'Block, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 67.26 },
-    { name: 'Zoom Communications Inc.', class: 'non_dividend_paying_stock', yield: '', price: 82.47 },
-    { name: 'Snowflake Inc.', class: 'non_dividend_paying_stock', yield: '', price: 196.81 },
-    { name: 'Palantir Technologies Inc.', class: 'non_dividend_paying_stock', yield: '', price: 158.74 },
-    { name: 'Roku, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 94.22 },
-    { name: 'Twilio Inc.', class: 'non_dividend_paying_stock', yield: '', price: 106.38 },
-    { name: 'Unity Software Inc.', class: 'non_dividend_paying_stock', yield: '', price: 39.16 },
-    { name: 'Rivian Automotive, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 13.1 },
-    { name: 'Lucid Group, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 2.03 },
-    { name: 'Robinhood Markets, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 109.32 },
-    { name: 'Coinbase Global, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 319.85 },
-    { name: 'Beyond Meat, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 2.45 },
-    { name: 'Peloton Interactive, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 7.91 },
-    { name: 'DocuSign, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 74.81 },
-    { name: 'Etsy, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 62.66 },
-    { name: 'Pinterest, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 35.61 },
-    { name: 'Snap Inc.', class: 'non_dividend_paying_stock', yield: '', price: 7.2 },
-    { name: 'DoorDash, Inc.', class: 'non_dividend_paying_stock', yield: '', price: 247.32 },
-    { name: 'Gold Dec 25', class: 'commodity', yield: '', price: 3418.5 },
-    { name: 'Silver Sep 25', class: 'commodity', yield: '', price: 39.054 },
-    { name: 'Crude Oil Oct 25', class: 'commodity', yield: '', price: 63.66 },
-    { name: 'Brent Crude Oil Last Day Financ', class: 'commodity', yield: '', price: 66.77 },
-    { name: 'Natural Gas Oct 25', class: 'commodity', yield: '', price: 2.8 },
-    { name: 'Copper Sep 25', class: 'commodity', yield: '', price: 4.459 },
-    { name: 'Chicago SRW Wheat Futures,Dec-2', class: 'commodity', yield: '', price: 527.25 },
-    { name: 'Corn Futures,Dec-2025', class: 'commodity', yield: '', price: 411.5 },
-    { name: 'Soybean Futures,Nov-2025', class: 'commodity', yield: '', price: 1058.5 },
-    { name: 'Coffee Dec 25', class: 'commodity', yield: '', price: 378.0 },
-    { name: 'Bitcoin', class: 'cryptocurrency', yield: '', price: 114595.19 },
-    { name: 'Ethereum', class: 'cryptocurrency', yield: '', price: 4948.64 },
-    { name: 'BNB', class: 'cryptocurrency', yield: '', price: 879.08 },
-    { name: 'XRP', class: 'cryptocurrency', yield: '', price: 3.11 },
-    { name: 'Cardano', class: 'cryptocurrency', yield: '', price: 0.96 },
-    { name: 'Solana', class: 'cryptocurrency', yield: '', price: 204.95827851 },
-    { name: 'Polkadot', class: 'cryptocurrency', yield: '', price: 4.2495 },
-    { name: 'Dogecoin', class: 'cryptocurrency', yield: '', price: 0.24 },
-    { name: 'Avalanche', class: 'cryptocurrency', yield: '', price: 25.11306609 },
-    { name: 'Chainlink', class: 'cryptocurrency', yield: '', price: 25.69452541 }
-  ];
-
   // ---------- State for assets search and filtering ----------
-  // Holds current search query string and selected category for filtering on the assets page.
   let currentSearchQuery = '';
   let selectedCategory = 'all';
 
-  // ---------- Render the assets list in card format ----------
-  // Render the list of assets in card form. Cards consist of a placeholder logo, a red sell
-  // button (hidden if the user does not own the asset), a central information column and
-  // a green buy button. Results are filtered by search query and selected category.
+  // ---------- Render the assets list in card format (LIVE list) ----------
   function renderAssetsList() {
     const container = document.getElementById('assetsList');
     if (!container) return;
     const user = getCurrentUser();
-    // Lower‑case search term for case‑insensitive filtering
+    // Lower-case search term for case-insensitive filtering
     const searchLower = currentSearchQuery.trim().toLowerCase();
-    let filtered = ASSET_LIST.filter((asset) => asset.name.toLowerCase().includes(searchLower));
+    let filtered = liveAssets().filter((asset) => asset.name.toLowerCase().includes(searchLower));
     // Apply category filter (skip when "all")
     if (selectedCategory && selectedCategory !== 'all') {
       filtered = filtered.filter((asset) => asset.class === selectedCategory);
@@ -332,13 +256,10 @@ document.addEventListener('DOMContentLoaded', () => {
     filtered.forEach((asset) => {
       const holdings = user?.positions?.filter((p) => p.name === asset.name) || [];
       const hasHoldings = holdings.length > 0;
-      const price = asset.price;
-      // Build a meta string: price plus optional yield. Append the yield directly without a dollar icon
-      let meta = `$${price.toFixed(2)}`;
-      if (asset.yield) {
-        // append yield with styling but without the green dollar sign
-        meta += ` - <span class="yield-percent">${asset.yield}</span>`;
-      }
+      const price = Number(asset.price) || 0;
+      const priceStr = price ? `$${price.toFixed(2)}` : '—';
+      let meta = priceStr;
+      if (asset.yield) meta += ` - <span class="yield-percent">${asset.yield}</span>`;
       html += `<div class="asset-card">
         <div class="asset-logo">logo</div>
         <button class="asset-action asset-sell-btn ${hasHoldings ? '' : 'disabled'}" data-action="sell" data-name="${asset.name}" data-price="${price}">sell</button>
@@ -352,12 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = html;
     updatePortfolioBar();
   }
-
-  // (Deprecated) Search and category variables are replaced by currentSearchQuery and selectedCategory
-  // let assetSearchQuery = '';
-  // let assetFilterCategory = 'all';
-
-  // ---------- Build the assets list (card layout) if the page contains #assetsList ----------
 
   // ---------- Utilities for portfolio management ----------
   function getCurrentUser() {
@@ -377,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
               id: Date.now() + Math.random(),
               name: k,
               quantity: v.quantity || 0,
-              purchasePrice: ASSET_LIST.find((a) => a.name === k)?.price || 0,
+              purchasePrice: livePrice(k, 0),
               purchaseDate: v.purchaseDate || Date.now()
             };
           });
@@ -397,9 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
     saveUsers(users);
   }
 
-  // ---------- Build the assets table if the page contains #assetsTable ----------
-  // Removed legacy renderAssetsTable() function. The assets page now uses card layout only.
-
   // ---------- Build the positions page if positions container present ----------
   function renderPositions() {
     const container = document.getElementById('positionsContainer');
@@ -408,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const balanceEl = document.getElementById('balanceDisplay');
     if (!user) {
       if (balanceEl) balanceEl.textContent = '';
-      container.innerHTML = '<p style="text-align:center;">Please log in to view your portfolio.</p>';
+      container.innerHTML = '<p style="text-align:center;">You don\'t have any positions yet. Visit the <a href="assets.html">Assets</a> page to start investing.</p>';
       return;
     }
     if (balanceEl) {
@@ -426,7 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const quantity = pos.quantity;
       const price = pos.purchasePrice;
       const total = price * quantity;
-      const assetInfo = ASSET_LIST.find((a) => a.name === name);
       // Simulate 24h return randomly between -3 and +3 percent
       const returnPerc = (Math.random() * 6 - 3).toFixed(2);
       const returnColor = returnPerc >= 0 ? '#009900' : '#cc0000';
@@ -464,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="position-actions">
           <button class="position-action sell" data-action="sell" data-name="${name}" data-price="${price}" data-id="${pos.id}">Sell</button>
-          <button class="position-action buy-more" data-action="buy" data-name="${name}" data-price="${assetInfo?.price || price}">Buy More</button>
+          <button class="position-action buy-more" data-action="buy" data-name="${name}" data-price="${livePrice(name, price)}">Buy More</button>
         </div>
       </div>`;
     });
@@ -473,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePortfolioBar();
   }
 
-  // ---------- Event delegation for assets table actions ----------
+  // ---------- Event delegation for assets table & positions actions ----------
   document.body.addEventListener('click', (e) => {
     const assetBtn = e.target.closest('.asset-action');
     if (assetBtn) {
@@ -554,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
       }
     }
+
     // event delegation for positions actions
     const posBtn = e.target.closest('.position-action');
     if (posBtn) {
@@ -655,8 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ---------- Render assets table or positions page if present ----------
-  // Render the assets list (new card layout) and positions on page load
+  // ---------- Render assets & positions on load ----------
   renderAssetsList();
   renderPositions();
 
@@ -687,9 +598,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render account page and attach actions if on account.html
   renderAccount();
   initAccountActions();
-
-  // Initialize treasury page sliders and interactivity if present
-  initTreasurySliders();
 
   // ---------- Initialize treasury sliders (pools and raffle) ----------
   function initTreasurySliders() {
@@ -868,12 +776,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Initialize treasury sliders
+  initTreasurySliders();
+
   // Update positions progress every second (for 2 minute maturity).
   setInterval(() => {
     renderPositions();
   }, 1000);
 
-  // ---------- Sign‑up logic (multi‑step form) ----------
+  // ---------- Sign-up logic (multi-step form) ----------
   const signupWrapper = document.querySelector('.signup-wrapper');
   if (signupWrapper) {
     const steps = Array.from(signupWrapper.querySelectorAll('.step'));
@@ -1005,6 +916,66 @@ document.addEventListener('DOMContentLoaded', () => {
         return {};
       }
     }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (emailEl?.value || '').trim().toLowerCase();
+      const password = passEl?.value || '';
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = 'Please enter your email and password.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+      const users = getUsers();
+      let user = users[email];
+      // fallback to CSV if not found locally
+      if (!user) {
+        const csvUsers = await fetchCsvUsers();
+        user = csvUsers[email];
+      }
+      if (!user || user.password !== password) {
+        if (errorEl) {
+          errorEl.textContent = 'Invalid email or password.';
+          errorEl.style.display = 'block';
+        } else {
+          alert('Invalid email or password.');
+        }
+        return;
+      }
+      // success
+      // ensure default balance and positions array (migrating legacy portfolio)
+      if (typeof user.balance !== 'number') user.balance = 100000;
+      if (!Array.isArray(user.positions)) {
+        // migrate legacy portfolio object if it exists
+        if (user.portfolio && typeof user.portfolio === 'object') {
+          user.positions = Object.keys(user.portfolio).map((k) => {
+            const v = user.portfolio[k];
+            return {
+              id: Date.now() + Math.random(),
+              name: k,
+              quantity: v.quantity || 0,
+              purchasePrice: livePrice(k, 0),
+              purchaseDate: v.purchaseDate || Date.now()
+            };
+          });
+          delete user.portfolio;
+        } else {
+          user.positions = [];
+        }
+      }
+      // persist user if loaded from CSV
+      const allUsers = getUsers();
+      allUsers[email] = user;
+      saveUsers(allUsers);
+      setCurrent(email);
+      // redirect to home page
+      window.location.href = 'index.html';
+    });
+  }
+});
+
 
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
