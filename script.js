@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = getCurrentUser();
     if (!user) { container.innerHTML='<p>Please log in to view your portfolio.</p>'; return; }
     const positions = (user.positions||[]).filter(p=>p.quantity>0);
-    if (!positions.length){ container.innerHTML='<p>You don\\'t have any positions yet. Visit the <a href="assets.html">Assets</a> page to start investing.</p>'; return; }
+    if (!positions.length){ container.innerHTML='<p>You dont have any positions yet. Visit the <a href="assets.html">Assets</a> page to start investing.</p>'; return; }
     let html='';
     positions.forEach(pos=>{
       const total = pos.quantity * pos.purchasePrice;
